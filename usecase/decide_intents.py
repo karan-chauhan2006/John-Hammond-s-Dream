@@ -10,7 +10,7 @@ class DecideIntentUseCase:
         animals = world.get_animal_list()
         for key in list(animals.keys()):
             animal = world.get_animal(key)
-            if self.check_attack(world, key):
+            if self.check_attack(world, key, animal):
                animal.set_intent(Intent("ATTACK", key))
             elif self.check_reproduce(world, key):
                 animal.set_intent(Intent("REPRODUCE", self.choose_birth(world, key)))
@@ -18,15 +18,26 @@ class DecideIntentUseCase:
                 animal.set_intent( Intent("MOVE", self.choose_direction(world, key)))
             animal.set_birthed(False)
     
-    def check_attack(self ,world: World, pos: Position) -> bool:
+    def check_attack(self ,world: World, pos: Position, animal: Animal) -> bool:
         neighbours = world.neighbours(pos)
         for loc in neighbours:
             if loc!= pos and world.has_animal(loc):
                 if world.get_animal(pos).get_birthed() and loc == world.get_animal(pos).get_birth_pos():
                     continue
+                elif self.check_gen(world, loc, animal):
+                    continue
                 else:
                     return True
         return False
+    
+    def check_gen(self, world: World, pos: Position, animal: Animal) -> bool:
+        posGen = [animal.get_gen()-1, animal.get_gen(), animal.get_gen()+1]
+        if animal.get_lineage() != world.get_animal(pos).get_lineage():
+            return False
+        if not posGen.__contains__(world.get_animal(pos).get_gen()):
+            return False
+        return True
+
     
     def choose_direction(self, world: World, pos: Position) -> Position:
         loc = self.find_loc(world,pos)
