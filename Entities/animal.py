@@ -13,11 +13,12 @@ class Animal:
     cooldown_aging: int = 0
     birthed: bool = False
     birth_pos: Position = Position(None, None)
+    lineage: int = None
 
     pos: Position
 
     def __init__(self, hit: int, max_life: int, threshold: float,
-                  vision: int, gen: int, pos: Position):
+                  vision: int, gen: int, pos: Position, lineage: int):
         self.hit = hit
         self.max_life = max_life
         self.life = max_life
@@ -27,7 +28,11 @@ class Animal:
         self.gen = gen
         self.pos = pos
         self.intent = Intent(None, None)
+        self.lineage = lineage
         pass 
+
+    def get_lineage(self) -> int:
+        return self.lineage
 
     def get_energy(self) -> float:
         return self.energy
@@ -107,3 +112,6 @@ class Animal:
 
     def set_birth_pos(self, pos: Position):
         self.birth_pos = pos
+
+    def set_lineage(self, lin: int):
+        self.lineage = lin

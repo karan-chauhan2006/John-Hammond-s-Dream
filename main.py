@@ -5,14 +5,14 @@ from .graphics.pyGameRenderer import PygameRenderer
 from .graphics.vizconfig import VizConfig
 def main():
     W, H = 40,40
-    turns = 500
+    turns = 300
 
     # Seed makes runs reproducible; change/remove if you want true randomness.
     world = World(W, H, seed=None)
     resolver = Turn_Resolver()
-    spawner = Spawner(animal_units=80, food_units=1000, 
-                      life_range=[10,1000], hit_range=[1,500],
-                       energy_range= [1,1000], vision_range=[10,17],
+    spawner = Spawner(animal_units=100, food_units=1100, 
+                      life_range=[1,20], hit_range=[1,5],
+                       energy_range= [1,100], vision_range=[10,17],
                         max_turns=turns )
     world = spawner.fill(world)
    

@@ -46,7 +46,7 @@ class Spawner:
             max_life = random.choice(self.life_range)
             threshold = random.choice(self.energy_range)
             vision = random.choice(self.vision_range)
-            animal = Animal(hit, max_life, threshold, vision, 0, pos)
+            animal = Animal(hit, max_life, threshold, vision, 0, pos, lineage= i)
             animal.set_birthed(True)
             animal.set_birth_pos(pos)
             world.add_animal(pos,animal)
