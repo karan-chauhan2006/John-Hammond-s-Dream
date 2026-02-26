@@ -1,8 +1,8 @@
 import random
 from typing import Optional
 from .position import Position
-from ..Entities.animal import Animal
-from ..Entities.food import Food
+from .animal import Animal
+from .food import Food
 from .state import State
 class World: 
     W: int

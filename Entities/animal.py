@@ -1,5 +1,5 @@
-from ..core.position import Position
-from ..core.intent import Intent
+from .position import Position
+from .intent import Intent
 class Animal:
     hit: int
     max_life: int

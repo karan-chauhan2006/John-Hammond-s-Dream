@@ -1,4 +1,4 @@
-from .world import World
+from ..Entities.world import World
 from ..usecase.food_decay import FoodDecayUseCase
 from ..usecase.decide_intents import DecideIntentUseCase
 from ..usecase.resolve_movement import ResolveMovementUseCase

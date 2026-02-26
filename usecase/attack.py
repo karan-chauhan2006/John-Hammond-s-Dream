@@ -1,7 +1,7 @@
 from ..Entities.animal import Animal
-from ..core.position import Position
-from ..core.world import World
-from ..core.intent import Intent
+from ..Entities.position import Position
+from ..Entities.world import World
+from ..Entities.intent import Intent
 class ResolveAttackUseCase:
 
     def execute(self, world: World):

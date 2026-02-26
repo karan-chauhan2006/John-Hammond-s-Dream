@@ -1,9 +1,8 @@
-from .core.world import World
+from .Entities.world import World
 from .core.turn_resolver import Turn_Resolver
 from .core.spawner import Spawner
-from .graphics.pyGameRenderer import PygameRenderer
+from .core.runner import Runner
 from .graphics.vizconfig import VizConfig
-from .core.state_updater import StateUpdater
 def main():
     W, H = 40,40
     turns = 300
@@ -11,14 +10,12 @@ def main():
     # Seed makes runs reproducible; change/remove if you want true randomness.
     world = World(W, H, seed=None)
     resolver = Turn_Resolver()
-    state_updater = StateUpdater()
     spawner = Spawner(animal_units=100, food_units=1100, 
                       life_range=[1,20], hit_range=[1,5],
                        energy_range= [1,100], vision_range=[10,17],
                         max_turns=turns )
     world = spawner.fill(world)
-    state_updater.execute(world)
-    viz = PygameRenderer(W, H, VizConfig(cell_size=18, fps=30, autoplay_steps_per_sec=1))
+    viz = Runner(W, H, VizConfig(cell_size=18, fps=30, autoplay_steps_per_sec=1))
     viz.run(world, resolver, max_turns=turns)
     
     # for t in range( turns + 1):

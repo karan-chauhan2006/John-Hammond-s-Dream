@@ -1,4 +1,4 @@
-from .world import World
+from ..Entities.world import World
 class StateUpdater:
 
     def execute(self, world: World): 

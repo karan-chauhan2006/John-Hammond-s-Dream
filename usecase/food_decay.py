@@ -1,5 +1,5 @@
 from ..Entities.food import Food
-from ..core.world import World
+from ..Entities.world import World
 class FoodDecayUseCase: 
 
     def execute(self, world: World):

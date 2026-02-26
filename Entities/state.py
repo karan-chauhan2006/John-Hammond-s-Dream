@@ -31,6 +31,14 @@ class State:
     totalCombat: float = 0.0
     totalE: float = None
 
+    def get_arr(self) -> list:
+        return [self.turn, self.animals, self.food, self.avgAE, self.avgET,
+                self.avgH, self.avgV, self.avgL, self.avgFE, self.avgGen,
+                self.maxAE, self.maxET, self.maxH, self.maxV, self.maxL,
+                self.maxFE, self.maxGen, self.minAE, self.minET, self.minH,
+                self.minV, self.minL, self.minFE, self.minGen, self.totalAE,
+                self.totalFE, self.totalE, self.totalCombat]
+
     def set_total_combat(self, combat: int):
         self.totalCombat = combat
 

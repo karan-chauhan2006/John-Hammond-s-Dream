@@ -1,8 +1,8 @@
 import random
-from ..core.intent import Intent
+from ..Entities.intent import Intent
 from ..Entities.animal import Animal
-from ..core.position import Position
-from ..core.world import World
+from ..Entities.position import Position
+from ..Entities.world import World
 
 class DecideIntentUseCase:
     

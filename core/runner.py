@@ -1,16 +1,19 @@
 import pygame
 import sys
-from .vizconfig import VizConfig, clamp01, lerp, rgb
-from ..core.world import World
+from ..graphics.vizconfig import VizConfig, clamp01, lerp, rgb
+from ..Entities.world import World
 from ..Entities.food import Food
 from ..Entities.animal import Animal
-class PygameRenderer:
+from ..data_handler.data_handler import DataHandler
+class Runner:
+    data_handler: DataHandler
     def __init__(self, W: int, H: int, cfg: VizConfig):
         pygame.init()
         self.W, self.H = W, H
         self.cfg = cfg
         self.width_px = W * cfg.cell_size
         self.height_px = H * cfg.cell_size
+        self.data_handler = DataHandler()
 
         self.screen = pygame.display.set_mode((self.width_px, self.height_px))
         pygame.display.set_caption("Ecosystem")
@@ -117,12 +120,12 @@ class PygameRenderer:
 
         pygame.display.flip()
 
-    def run(self, world: World, resolver, max_turns=1000000):
+    def run(self, world: World, resolver, max_turns=1000):
         dt = 0.0
         self.turn = 0
         self.autoplay = False
         self._accum = 0.0
-        world.print_state()
+        self.data_handler.save_state(world.get_state())
 
         while self.turn <= max_turns:
             self.clock.tick(self.cfg.fps)
@@ -135,6 +138,7 @@ class PygameRenderer:
                 # spawner.spawn(world) ...
                 # resolver = Turn_Resolver() ...
                 self.autoplay = False
+                break
 
             # Autoplay stepping (fixed turns/sec)
             if self.autoplay:
@@ -144,18 +148,19 @@ class PygameRenderer:
                     self._accum -= step_interval
                     resolver.step(world)  # <- your turn advancement
                     self.turn += 1
-                    world.print_state()
+                    self.data_handler.save_state(world.get_state())
                     
 
             # Manual single-step
             if step_once:
                 resolver.step(world)
                 self.turn += 1
-                world.print_state()
+                self.data_handler.save_state(world.get_state())
 
             # If you have combat damage stored, pass it; else None
-            combat_damage = getattr(resolver, "last_combat_damage", None)
+            combat_damage = world.get_state().totalCombat
             self.draw(world, combat_damage=combat_damage)
+        self.data_handler.save_data()
 
     
             
