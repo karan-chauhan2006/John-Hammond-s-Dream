@@ -1,4 +1,4 @@
-from .world import World
+from ..Entities.world import World
 from ..usecase.food_decay import FoodDecayUseCase
 from ..usecase.decide_intents import DecideIntentUseCase
 from ..usecase.resolve_movement import ResolveMovementUseCase
@@ -7,6 +7,7 @@ from ..usecase.aging import AgeUseCase
 from ..usecase.death import DeathUseCase
 from ..usecase.attack import ResolveAttackUseCase
 from ..usecase.reproduce import ReproduceUseCase
+from .state_updater import StateUpdater
 class Turn_Resolver: 
     decide_intent: DecideIntentUseCase
     food_decay: FoodDecayUseCase
@@ -16,6 +17,7 @@ class Turn_Resolver:
     death: DeathUseCase
     attack: ResolveAttackUseCase
     reproduce: ReproduceUseCase
+    stateUpdater: StateUpdater
 
 
 
@@ -28,6 +30,7 @@ class Turn_Resolver:
         self.death = DeathUseCase()
         self.attack = ResolveAttackUseCase()
         self.reproduce = ReproduceUseCase()
+        self.stateUpdater = StateUpdater()
 
     def step(self, world: World) -> None:
         self.decide_intent.execute(world)
@@ -38,4 +41,5 @@ class Turn_Resolver:
         self.eat.execute(world)
         self.age.execute(world)
         self.death.execute(world)
+        self.stateUpdater.execute(world)
         

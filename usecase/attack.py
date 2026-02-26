@@ -1,7 +1,7 @@
 from ..Entities.animal import Animal
-from ..core.position import Position
-from ..core.world import World
-from ..core.intent import Intent
+from ..Entities.position import Position
+from ..Entities.world import World
+from ..Entities.intent import Intent
 class ResolveAttackUseCase:
 
     def execute(self, world: World):
@@ -19,7 +19,7 @@ class ResolveAttackUseCase:
         for pos in list(damage.keys()):
             target = world.get_animal(pos)
             target.set_life(target.get_life()-damage[pos])
-        print("combat total damage:", sum(damage.values()))
+        world.get_state().set_total_combat(sum(damage.values()))
 
 
 

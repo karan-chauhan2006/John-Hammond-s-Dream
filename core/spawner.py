@@ -1,8 +1,9 @@
 import random
 from typing import Optional
-from .world import World
+from ..Entities.world import World
 from ..Entities.animal import Animal
 from ..Entities.food import Food
+from .state_updater import StateUpdater
 
 
 class Spawner:
@@ -13,6 +14,7 @@ class Spawner:
     energy_range: list[int]
     vision_range: list[int]
     max_turns: int = -1
+    state_updater: StateUpdater
 
     def __init__(self, animal_units: int, food_units: int, 
                  life_range: list[int], hit_range: list[int],
@@ -33,10 +35,12 @@ class Spawner:
         for i in range(vision_range[1]-vision_range[0]):
             self.vision_range.append(vision_range[0]+i)
         self.max_turns = max_turns
+        self.state_updater = StateUpdater()
 
     def fill(self, world: World):
         world = self.spawn_animals(world)
         world = self.spawn_food(world)
+        self.state_updater.execute(world)
         return world
         
     def spawn_animals(self, world: World):

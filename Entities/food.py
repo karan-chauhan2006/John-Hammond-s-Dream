@@ -1,4 +1,4 @@
-from ..core.position import Position
+from .position import Position
 class Food:
     energy: float
     pos: Position

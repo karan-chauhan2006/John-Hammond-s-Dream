@@ -1,16 +1,19 @@
 import pygame
 import sys
-from .vizconfig import VizConfig, clamp01, lerp, rgb
-from ..core.world import World
+from ..graphics.vizconfig import VizConfig, clamp01, lerp, rgb
+from ..Entities.world import World
 from ..Entities.food import Food
 from ..Entities.animal import Animal
-class PygameRenderer:
+from ..data_handler.data_handler import DataHandler
+class Runner:
+    data_handler: DataHandler
     def __init__(self, W: int, H: int, cfg: VizConfig):
         pygame.init()
         self.W, self.H = W, H
         self.cfg = cfg
         self.width_px = W * cfg.cell_size
         self.height_px = H * cfg.cell_size
+        self.data_handler = DataHandler()
 
         self.screen = pygame.display.set_mode((self.width_px, self.height_px))
         pygame.display.set_caption("Ecosystem")
@@ -117,12 +120,12 @@ class PygameRenderer:
 
         pygame.display.flip()
 
-    def run(self, world, resolver, max_turns=1000000):
+    def run(self, world: World, resolver, max_turns=1000):
         dt = 0.0
         self.turn = 0
         self.autoplay = False
         self._accum = 0.0
-        self.printer(world)
+        self.data_handler.save_state(world.get_state())
 
         while self.turn <= max_turns:
             self.clock.tick(self.cfg.fps)
@@ -135,6 +138,7 @@ class PygameRenderer:
                 # spawner.spawn(world) ...
                 # resolver = Turn_Resolver() ...
                 self.autoplay = False
+                break
 
             # Autoplay stepping (fixed turns/sec)
             if self.autoplay:
@@ -144,85 +148,19 @@ class PygameRenderer:
                     self._accum -= step_interval
                     resolver.step(world)  # <- your turn advancement
                     self.turn += 1
-                    self.printer(world)
+                    self.data_handler.save_state(world.get_state())
                     
 
             # Manual single-step
             if step_once:
                 resolver.step(world)
                 self.turn += 1
-                self.printer(world)
+                self.data_handler.save_state(world.get_state())
 
             # If you have combat damage stored, pass it; else None
-            combat_damage = getattr(resolver, "last_combat_damage", None)
+            combat_damage = world.get_state().totalCombat
             self.draw(world, combat_damage=combat_damage)
+        self.data_handler.save_data()
 
-    def printer(self, world: World) -> None:
-        animals_count = len(world.animals)
-        foods_count = len(world.foods)
-        avg_energy = 0.0
-        avg_energy_threshold = 0.0
-        avg_hit = 0
-        avg_vision = 0
-        avg_life = 0
-        avg_food_e = 0.0
-        max_gen = 0
-        max_a_energy = 0
-        max_hit = 0
-        max_vision = 0
-        max_life = 0
-        max_threshold = 0
-        max_f_energy = 0
-        if animals_count > 0:
-            for a in list(world.get_animal_list().values()):
-                avg_energy += a.get_energy()
-                avg_energy_threshold += a.get_threshold()
-                avg_hit += a.get_hit()
-                avg_life += a.get_life()
-                avg_vision += a.get_vision()
-                if a.get_gen() > max_gen:
-                    max_gen = a.get_gen()
-                if a.get_energy() > max_a_energy:
-                    max_a_energy = a.get_energy()
-                if a.get_hit() > max_hit:
-                    max_hit = a.get_hit()
-                if a.get_vision() > max_vision:
-                    max_vision = a.get_vision()
-                if a.get_max_life() > max_life:
-                    max_life = a.get_life()
-                if a.get_threshold() > max_threshold:
-                    max_threshold = a.get_threshold()
-            avg_energy = avg_energy / animals_count
-            avg_energy_threshold = avg_energy_threshold / animals_count
-            avg_hit = avg_hit/animals_count
-            avg_vision = avg_vision/animals_count
-            avg_life = avg_life/animals_count
-
-        
-        if foods_count >0:
-            for f in list(world.get_food_list().values()):
-                avg_food_e += f.get_energy()
-                if f.get_energy() > max_f_energy:
-                    max_f_energy = f.get_energy()
-            avg_food_e = avg_food_e/foods_count
-       
-        print(
-        f"Turn {self.turn:03d} | "
-        f"Animals: {animals_count:4d} | "
-        f"Food: {foods_count:4d} | "
-        f"Avg animal energy: {avg_energy:7.2f} | "
-        f"Avg energy threshold: {avg_energy_threshold:7.2f} | "
-        f"Avg hit: {avg_hit:7.2f} | "
-        f"Avg vision: {avg_vision:7.2f} | "
-        f"Avg life: {avg_life:7.2f} | "
-        f"Avg food energy: {avg_food_e:7.2f} | "
-        f"Max animal energy: {max_a_energy:7.2f} | "
-        f"Max energy threshold: {max_threshold:7.2f} | "
-        f"Max hit: {max_hit:4d} | "
-        f"Max vision: {max_vision:4d} | "
-        f"Max life: {max_life:4d} | "
-        f"Max gen on map: {max_gen:4d} | "
-        f"Max food energy: {max_f_energy:7.2f} | "
-    )
-
+    
             

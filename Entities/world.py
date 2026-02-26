@@ -1,14 +1,15 @@
 import random
 from typing import Optional
 from .position import Position
-from ..Entities.animal import Animal
-from ..Entities.food import Food
+from .animal import Animal
+from .food import Food
+from .state import State
 class World: 
     W: int
     H: int
     animals: dict[Position, Animal]
     foods: dict[Position, Food]
-    state: dict[str, int|float|None]
+    state: State
 
     def __init__(self, W: int, H: int, seed: Optional[int] = None):
         self.W = W
@@ -16,23 +17,7 @@ class World:
         self.rng = random.Random(seed)
         self.animals = {}
         self.foods = {}
-        self.state = {
-            "Turn" : -1,
-            "Animals": 0,
-            "Food": 0,
-            "Avg animal energy": None,
-            "Avg energy threshold": None,
-            "Avg hit": None,
-            "Avg vision": None,
-            "Avg life": None,
-            "Avg food energy": None,
-            "Max animal energy": None,
-            "Max energy threshold": None,
-            "Max hit": None,
-            "Max vision": None,
-            "Max life": None,
-            "Max gen on map": None,
-            "Max food energy": None}
+        self.state = State()
 
     def wrap(self, pos: Position) -> Position:
         return Position(pos.x % self.W, pos.y % self.H)
@@ -130,10 +115,12 @@ class World:
                 return pos
         raise RuntimeError("Could not find empty cell for animal (world too full?)")
     
-    def get_state(self) -> dict[str, int|float|None]:
+    def get_state(self) -> State:
         return self.state
     
-    def set_state(self, state: dict[str, int|float|None]):
+    def set_state(self, state: State):
         self.state = state
 
+    def print_state(self):
+        self.state.print()
     

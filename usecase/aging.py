@@ -1,4 +1,4 @@
-from ..core.world import World
+from ..Entities.world import World
 from ..Entities.animal import Animal
 class AgeUseCase: 
     def execute(self, world: World):
