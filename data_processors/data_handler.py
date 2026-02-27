@@ -17,11 +17,12 @@ class DataHandler:
     def save_state(self, state: State):
         self.data.append(state.get_arr())
         
-    def save_data(self, spawn_data: list):
+    def save_data(self, spawn_data: list) -> Path:
         path = self.create_dir()
         self.save_spawn_data(path, spawn_data)
         self.save_turn_data(path)
         self.save_gen_data(path)
+        return path
     
     def create_dir(self) -> Path:
         now = datetime.now()

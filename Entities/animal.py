@@ -1,12 +1,12 @@
 from .position import Position
 from .intent import Intent
 class Animal:
-    hit: int
-    max_life: int
-    life: int
+    hit: float
+    max_life: float
+    life: float
     energy: float
     threshold: float
-    vision: int
+    vision: float
     gen: int = 0
     intent: Intent
     cooldown_attack: int = 0

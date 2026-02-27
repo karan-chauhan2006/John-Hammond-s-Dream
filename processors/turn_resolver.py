@@ -21,7 +21,7 @@ class Turn_Resolver:
 
 
 
-    def __init__(self):
+    def __init__(self, mutate_list: list):
         self.food_decay = FoodDecayUseCase()
         self.decide_intent = DecideIntentUseCase()
         self.resolve_movement = ResolveMovementUseCase()
@@ -29,7 +29,7 @@ class Turn_Resolver:
         self.age = AgeUseCase()
         self.death = DeathUseCase()
         self.attack = ResolveAttackUseCase()
-        self.reproduce = ReproduceUseCase()
+        self.reproduce = ReproduceUseCase(mutate_list)
         self.stateUpdater = StateUpdater()
 
     def step(self, world: World) -> None:

@@ -4,7 +4,7 @@ from ..graphics.vizconfig import VizConfig, clamp01, lerp, rgb
 from ..Entities.world import World
 from ..Entities.food import Food
 from ..Entities.animal import Animal
-from ..data_handler.data_handler import DataHandler
+from ..data_processors.data_handler import DataHandler
 class Runner:
     data_handler: DataHandler
     def __init__(self, W: int, H: int, cfg: VizConfig):
@@ -120,7 +120,7 @@ class Runner:
 
         pygame.display.flip()
 
-    def run(self, world: World, resolver, max_turns=1000):
+    def run(self, world: World, resolver, max_turns=1000, ):
         dt = 0.0
         self.turn = 0
         self.autoplay = False

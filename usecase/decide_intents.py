@@ -24,19 +24,36 @@ class DecideIntentUseCase:
             if loc!= pos and world.has_animal(loc):
                 if world.get_animal(pos).get_birthed() and loc == world.get_animal(pos).get_birth_pos():
                     continue
-                elif self.check_gen(world, loc, animal):
+                elif self.check_genv1(world, loc, animal):
                     continue
                 else:
                     return True
         return False
     
-    def check_gen(self, world: World, pos: Position, animal: Animal) -> bool:
+    def check_genv1(self, world: World, pos: Position, animal: Animal) -> bool:
+        #same lineage gen +- 1
         posGen = [animal.get_gen()-1, animal.get_gen(), animal.get_gen()+1]
         if animal.get_lineage() != world.get_animal(pos).get_lineage():
             return False
         if not posGen.__contains__(world.get_animal(pos).get_gen()):
             return False
         return True
+    
+    def check_genv2():
+        # same lineage
+        pass
+
+    def check_genv3():
+        #none 
+        pass
+
+    def check_genv4():
+        #gen+-1
+        pass
+
+    def check_genv5():
+        #common uniter
+        pass
 
     
     def choose_direction(self, world: World, pos: Position) -> Position:
