@@ -160,7 +160,7 @@ class Runner:
             # If you have combat damage stored, pass it; else None
             combat_damage = world.get_state().totalCombat
             self.draw(world, combat_damage=combat_damage)
-        self.data_handler.save_data()
+        return self.data_handler
 
     
             

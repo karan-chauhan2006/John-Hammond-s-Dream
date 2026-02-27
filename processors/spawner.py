@@ -64,5 +64,14 @@ class Spawner:
             food = Food(energy, pos)
             world.add_food(pos, food)
         return world
+    
+    def get_spawn_data(self) -> list:
+        return [["#animals", self.animal_units, self.animal_units], 
+                ["#food", self.food_units, self.food_units], 
+                ["hit range", self.hit_range[0], self.hit_range[-1]],
+                ["life range", self.life_range[0], self.life_range[-1]],
+                ["vision range", self.vision_range[0], self.vision_range[-1]],
+                ["energy range", self.energy_range[0], self.energy_range[-1]],
+                ["max turns", self.max_turns, self.max_turns]]
 
         

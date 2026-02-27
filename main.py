@@ -1,7 +1,7 @@
 from .Entities.world import World
-from .core.turn_resolver import Turn_Resolver
-from .core.spawner import Spawner
-from .core.runner import Runner
+from .processors.turn_resolver import Turn_Resolver
+from .processors.spawner import Spawner
+from .processors.runner import Runner
 from .graphics.vizconfig import VizConfig
 def main():
     W, H = 40,40
@@ -16,7 +16,8 @@ def main():
                         max_turns=turns )
     world = spawner.fill(world)
     viz = Runner(W, H, VizConfig(cell_size=18, fps=30, autoplay_steps_per_sec=1))
-    viz.run(world, resolver, max_turns=turns)
+    handler = viz.run(world, resolver, max_turns=turns)
+    handler.save_data(spawner.get_spawn_data())
     
     # for t in range( turns + 1):
     #     if t!=0:
