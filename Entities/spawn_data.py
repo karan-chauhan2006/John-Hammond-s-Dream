@@ -1,6 +1,6 @@
 from typing import Optional
-
-
+from ..config import MUTATION_CONSTANT, STABILITY_FACTOR, MAXPRL
+from ..config import MINPRL, TAU, REPRODUCTION_CONSTANT, MUTATION_CHOICE
 class SpawnData:
     animal_units : int
     food_units: int
@@ -39,15 +39,20 @@ class SpawnData:
                 ["energy range", self.energy_range[0], self.energy_range[-1]],
                 ["max turns", self.max_turns, self.max_turns],
                 ["Map Width", W, W],
-                ["Map Height", H, H]]
+                ["Map Height", H, H],
+                ["Peace Regen Limit", MINPRL, MAXPRL],
+                ["Stability factor", STABILITY_FACTOR, STABILITY_FACTOR],
+                ["Half cycle", TAU, TAU],
+                ["Mutation constant", MUTATION_CONSTANT, MUTATION_CONSTANT],
+                ["Mutation Choice", MUTATION_CHOICE[0], MUTATION_CHOICE[-1]]]
     
     def get_mutate_list(self):
         #HLTV
         
-        return [(self.hit_range[-1]-self.hit_range[0]+2)*0.01,
-                (self.life_range[-1]-self.life_range[0]+2)*0.01,
-                (self.energy_range[-1]-self.energy_range[0]+2)*0.01,
-                (self.vision_range[-1]-self.vision_range[0]+2)*0.01]
+        return [(self.hit_range[-1]-self.hit_range[0]+2)*MUTATION_CONSTANT,
+                (self.life_range[-1]-self.life_range[0]+2)*MUTATION_CONSTANT,
+                (self.energy_range[-1]-self.energy_range[0]+2)*MUTATION_CONSTANT,
+                (self.vision_range[-1]-self.vision_range[0]+2)*MUTATION_CONSTANT]
     
     def get_eng_list(self):
         return self.energy_range

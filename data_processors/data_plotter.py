@@ -1,7 +1,7 @@
 from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
-from ..config import PLOT_DATA
+from ..config import PLOT_DATA, STABILITY_FACTOR
 import numpy as np
 class DataPlotter: 
     data_path: Path
@@ -154,9 +154,9 @@ class DataPlotter:
          avgH = turn_data["avgH"]
          maxH = turn_data["maxH"]
          neighbour_factor = totalcombat / animal
-         min_bound = (np.floor(neighbour_factor) -1)*minH*animal*0.25
-         avg_bound = (np.floor(neighbour_factor) -1)*avgH*animal*0.25
-         max_bound = (np.floor(neighbour_factor) -1)*maxH*animal*0.25
+         min_bound = (np.floor(neighbour_factor) -1)*minH*animal*STABILITY_FACTOR
+         avg_bound = (np.floor(neighbour_factor) -1)*avgH*animal*STABILITY_FACTOR
+         max_bound = (np.floor(neighbour_factor) -1)*maxH*animal*STABILITY_FACTOR
 
          axs.plot(turn, min_bound, 
                     label = f"min_bound")

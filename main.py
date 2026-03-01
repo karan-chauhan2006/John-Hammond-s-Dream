@@ -7,10 +7,10 @@ from .graphics.vizconfig import VizConfig
 from .data_processors.data_plotter import DataPlotter
 def main():
     W, H = 40,40
-    turns = 1000
+    turns = 5000
 
     # Seed makes runs reproducible; change/remove if you want true randomness.
-    world = World(W, H, seed=10)
+    world = World(W, H, seed = None)
     spawn_data = SpawnData(animal_units=100, food_units=600, 
                       life_range=[1,50], hit_range=[1,10],
                        energy_range= [1,100], vision_range=[10,15],

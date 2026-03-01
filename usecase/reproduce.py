@@ -3,6 +3,8 @@ from ..Entities.world import World
 from ..Entities.intent import Intent
 from ..Entities.animal import Animal
 from ..Entities.food import Food
+from ..config import MUTATION_CHOICE
+import math
 class ReproduceUseCase:
     mutate_list: list #HLTV
 
@@ -12,7 +14,8 @@ class ReproduceUseCase:
     def execute(self, world: World):
         animals = world.get_animal_list()
         for key in list(animals.keys()):
-            if world.get_animal(key).get_intent().get_kind() == "REPRODUCE":
+            intent = world.get_animal(key).get_intent()
+            if intent.get_kind() == "REPRODUCE" and not world.has_animal(intent.get_target()):
                 parent = world.get_animal(key)
                 child = self.create_child(parent)
                 self.update_parent(parent)
@@ -24,10 +27,10 @@ class ReproduceUseCase:
 
 
     def create_child(self, parent: Animal) -> Animal:
-        hit = parent.get_hit() + random.choice([-1,0,1])*self.mutate_list[0]
-        max_life = parent.get_max_life() + random.choice([-1,0,1])*self.mutate_list[1]
-        threshold = parent.get_threshold() + random.choice([-1,0,1])*self.mutate_list[2]
-        vision = parent.get_vision() + random.choice([-1,0,1])*self.mutate_list[3]
+        hit = parent.get_hit() + random.choice(MUTATION_CHOICE)*self.mutate_list[0]
+        max_life = parent.get_max_life() + random.choice(MUTATION_CHOICE)*self.mutate_list[1]
+        threshold = parent.get_threshold() + random.choice(MUTATION_CHOICE)*self.mutate_list[2]
+        vision = parent.get_vision() + random.choice(MUTATION_CHOICE)*self.mutate_list[3]
         gen = parent.get_gen() + 1
         pos = parent.get_intent().get_target()
         child = Animal(hit, max_life, threshold, vision, gen, pos, lineage= parent.get_lineage())

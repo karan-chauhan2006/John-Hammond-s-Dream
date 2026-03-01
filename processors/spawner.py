@@ -22,7 +22,10 @@ class Spawner:
         
     def spawn_animals(self, world: World):
         for i in range(self.spawn_data.animal_units):
-            pos = world.random_empty_cell()
+            try:
+                pos = world.random_empty_cell()
+            except RuntimeError:
+                break
             hit = random.choice(self.spawn_data.hit_range)
             max_life = random.choice(self.spawn_data.life_range)
             threshold = random.choice(self.spawn_data.energy_range)
@@ -36,7 +39,10 @@ class Spawner:
 
     def spawn_food(self, world: World):
         for i in range(self.spawn_data.food_units):
-            pos = world.random_empty_cell()
+            try:
+                pos = world.random_empty_cell()
+            except RuntimeError:
+                break
             energy = random.choice(self.spawn_data.energy_range)
             food = Food(energy, pos)
             world.add_food(pos, food)

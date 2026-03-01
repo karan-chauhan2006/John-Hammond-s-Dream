@@ -1,5 +1,6 @@
 from .position import Position
 from .intent import Intent
+from ..config import REPRODUCTION_CONSTANT
 class Animal:
     hit: float
     max_life: float
@@ -23,7 +24,7 @@ class Animal:
         self.max_life = max_life
         self.life = max_life
         self.threshold = threshold
-        self.energy = threshold/4
+        self.energy = threshold/REPRODUCTION_CONSTANT
         self.vision = vision
         self.gen = gen
         self.pos = pos

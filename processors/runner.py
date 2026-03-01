@@ -36,8 +36,7 @@ class Runner:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit(0)
+                    restart = True
 
                 if event.key == pygame.K_SPACE:
                     step_once = True
