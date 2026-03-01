@@ -39,9 +39,11 @@ class DecideIntentUseCase:
             return False
         return True
     
-    def check_genv2():
+    def check_genv2(self, world: World, pos: Position, animal: Animal):
         # same lineage
-        pass
+        if animal.get_lineage() != world.get_animal(pos).get_lineage():
+            return False
+        return True
 
     def check_genv3():
         #none 

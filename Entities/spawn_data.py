@@ -48,3 +48,6 @@ class SpawnData:
                 (self.life_range[-1]-self.life_range[0]+2)*0.01,
                 (self.energy_range[-1]-self.energy_range[0]+2)*0.01,
                 (self.vision_range[-1]-self.vision_range[0]+2)*0.01]
+    
+    def get_eng_list(self):
+        return self.energy_range

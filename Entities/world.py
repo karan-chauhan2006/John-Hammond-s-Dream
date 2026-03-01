@@ -124,3 +124,6 @@ class World:
     def print_state(self):
         self.state.print()
     
+    def get_space(self):
+        return self.W * self.H
+    

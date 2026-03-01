@@ -9,6 +9,7 @@ class State:
     avgET: float = None
     avgH: float = None
     avgV: float = None
+    avgML: float = None
     avgL: float = None
     avgFE: float = None
     avgGen: float = None
@@ -33,11 +34,12 @@ class State:
 
     def get_arr(self) -> list:
         return [self.turn, self.animals, self.food, self.avgAE, self.avgET,
-                self.avgH, self.avgV, self.avgL, self.avgFE, self.avgGen,
+                self.avgH, self.avgV, self.avgML, self.avgL, self.avgFE, self.avgGen,
                 self.maxAE, self.maxET, self.maxH, self.maxV, self.maxL,
                 self.maxFE, self.maxGen, self.minAE, self.minET, self.minH,
                 self.minV, self.minL, self.minFE, self.minGen, self.totalAE,
                 self.totalFE, self.totalE, self.totalCombat]
+    
 
     def set_total_combat(self, combat: int):
         self.totalCombat = combat
@@ -51,6 +53,7 @@ class State:
         f"Avg energy threshold: {self.avgET:7.2f} | "
         f"Avg hit: {self.avgH:7.2f} | "
         f"Avg vision: {self.avgV:7.2f} | "
+        f"Avg Max life: {self.avgML:7.2f} | "
         f"Avg life: {self.avgL:7.2f} | "
         f"Avg food energy: {self.avgFE:7.2f} | "
         f"Avg Gen: {self.avgGen:7.2f} | "

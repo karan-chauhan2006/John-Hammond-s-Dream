@@ -1,0 +1,15 @@
+# Python cache
+__pycache__/
+*.pyc
+
+
+# Generated data
+data/
+plot/
+
+# CSV outputs
+*.csv
+*.png
+
+rough.py
+

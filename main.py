@@ -7,15 +7,15 @@ from .graphics.vizconfig import VizConfig
 from .data_processors.data_plotter import DataPlotter
 def main():
     W, H = 40,40
-    turns = 300
+    turns = 1000
 
     # Seed makes runs reproducible; change/remove if you want true randomness.
-    world = World(W, H, seed=None)
-    spawn_data = SpawnData(animal_units=100, food_units=1100, 
-                      life_range=[1,20], hit_range=[1,5],
-                       energy_range= [1,100], vision_range=[10,17],
+    world = World(W, H, seed=10)
+    spawn_data = SpawnData(animal_units=100, food_units=600, 
+                      life_range=[1,50], hit_range=[1,10],
+                       energy_range= [1,100], vision_range=[10,15],
                         max_turns=turns)
-    resolver = Turn_Resolver(spawn_data.get_mutate_list())
+    resolver = Turn_Resolver(spawn_data.get_mutate_list(), spawn_data.get_eng_list())
     spawner = Spawner(spawn_data)
     world = spawner.fill(world)
     viz = Runner(W, H, VizConfig(cell_size=18, fps=30, autoplay_steps_per_sec=1))

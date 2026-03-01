@@ -3,13 +3,10 @@ from ..Entities.state import State
 from datetime import datetime
 from pathlib import Path
 from ..config import RAW_DATA
+from ..config import CLOUMNS
 class DataHandler: 
     data = list[list]
-    columns = ["Turn", "#animals", "#food", "avgAE", "avgET", "avgH",
-               "avgV", "avgL", "avgFE", "avgGen", "maxAE", "maxET", "maxH",
-               "maxV", "maxL", "maxFE", "maxGen", "minAE", "minET", "minH",
-               "minV", "minL", "minFE", "minGen", "totalAE", "totalFE", 
-               "totalE", "totalCombat"]
+    columns = CLOUMNS
     
     def __init__(self):
         self.data = []
