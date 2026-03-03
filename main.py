@@ -13,7 +13,7 @@ def main():
     world = World(W, H, seed = None)
     spawn_data = SpawnData(animal_units=100, food_units=600, 
                       life_range=[1,50], hit_range=[1,10],
-                       energy_range= [1,100], vision_range=[10,15],
+                       energy_range= [1,100], vision_range=[10,14],
                         max_turns=turns)
     resolver = Turn_Resolver(spawn_data.get_mutate_list(), spawn_data.get_eng_list())
     spawner = Spawner(spawn_data)

@@ -1,6 +1,8 @@
 from .position import Position
 from .intent import Intent
 from ..config import REPRODUCTION_CONSTANT
+import random
+import math
 class Animal:
     hit: float
     max_life: float
@@ -15,7 +17,9 @@ class Animal:
     birthed: bool = False
     birth_pos: Position = Position(None, None)
     lineage: int = None
-
+    life_divider: int
+    divide_counter: int = 0
+    threshold_buffer: int = 0
     pos: Position
 
     def __init__(self, hit: int, max_life: int, threshold: float,
@@ -30,6 +34,8 @@ class Animal:
         self.pos = pos
         self.intent = Intent(None, None)
         self.lineage = lineage
+        self.life_divider = 10
+        self.threshold_buffer = math.ceil(threshold/(2*self.life_divider))
         pass 
 
     def get_lineage(self) -> int:

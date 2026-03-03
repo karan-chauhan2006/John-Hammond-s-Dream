@@ -7,6 +7,11 @@ class AgeUseCase:
             animal = world.get_animal(key)
             if animal.get_cooldown_aging() == 0:
                 animal.set_life(animal.get_life()-1)
+                animal.divide_counter += 1
+                if animal.divide_counter >= animal.life_divider:
+                    while animal.divide_counter >= animal.life_divider:
+                        animal.divide_counter -= animal.life_divider
+                        animal.threshold += animal.threshold_buffer
             else:
                 animal.set_cooldown_aging(animal.get_cooldown_aging()-1)
             if animal.get_cooldown_attack() == 0:

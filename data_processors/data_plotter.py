@@ -154,9 +154,11 @@ class DataPlotter:
          avgH = turn_data["avgH"]
          maxH = turn_data["maxH"]
          neighbour_factor = totalcombat / animal
-         min_bound = (np.floor(neighbour_factor) -1)*minH*animal*STABILITY_FACTOR
-         avg_bound = (np.floor(neighbour_factor) -1)*avgH*animal*STABILITY_FACTOR
-         max_bound = (np.floor(neighbour_factor) -1)*maxH*animal*STABILITY_FACTOR
+         base = neighbour_factor-1
+         base = base.clip(upper = 4, lower = 1) 
+         min_bound = base*minH*animal*STABILITY_FACTOR
+         avg_bound = base*avgH*animal*STABILITY_FACTOR
+         max_bound = base*maxH*animal*STABILITY_FACTOR
 
          axs.plot(turn, min_bound, 
                     label = f"min_bound")

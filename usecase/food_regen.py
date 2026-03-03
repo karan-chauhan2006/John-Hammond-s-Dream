@@ -28,10 +28,10 @@ class FoodRegenUseCase:
         maxH = world.get_state().maxH
         totalCombat = world.get_state().totalCombat
         if animal > 0:
-            Nfactor = totalCombat/animal
-            self.min_bound = minH * min(math.floor(Nfactor)-1,3) * animal * self.stability_factor
-            self.max_bound = maxH * min(math.floor(Nfactor)-1,3) * animal * self.stability_factor
-            self.avg_bound = avgH * min(math.floor(Nfactor)-1,3) * animal * self.stability_factor
+            Nfactor = min((totalCombat/animal)-1,4)
+            self.min_bound = minH * Nfactor * animal * self.stability_factor
+            self.max_bound = maxH * Nfactor * animal * self.stability_factor
+            self.avg_bound = avgH * Nfactor * animal * self.stability_factor
         else:
             self.min_bound = 0.0
             self.max_bound = 0.0

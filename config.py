@@ -16,7 +16,7 @@ STABILITY_FACTOR = 0.25
 MAXPRL = 0.4
 MINPRL = 0.01
 TAU = 25
-
+#advised to always keep the list in increasing order, (and use all integers between max and min)
 REPRODUCTION_CONSTANT = 4
 MUTATION_CONSTANT = 0.01
-MUTATION_CHOICE = [-1,0,1] #advised to always keep the list in increasing order, (and use all integers between max and min)
+MUTATION_CHOICE = [-1,0,1] 
