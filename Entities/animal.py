@@ -1,12 +1,15 @@
 from .position import Position
 from .intent import Intent
+from ..config import REPRODUCTION_CONSTANT, LIFE_DIVIDER
+
+import math
 class Animal:
-    hit: int
-    max_life: int
-    life: int
+    hit: float
+    max_life: float
+    life: float
     energy: float
     threshold: float
-    vision: int
+    vision: float
     gen: int = 0
     intent: Intent
     cooldown_attack: int = 0
@@ -14,22 +17,29 @@ class Animal:
     birthed: bool = False
     birth_pos: Position = Position(None, None)
     lineage: int = None
-
+    life_divider: int
+    divide_counter: int = 0
+    threshold_buffer: int = 0
     pos: Position
-
+    ate: bool = False
+    
     def __init__(self, hit: int, max_life: int, threshold: float,
                   vision: int, gen: int, pos: Position, lineage: int):
         self.hit = hit
         self.max_life = max_life
         self.life = max_life
         self.threshold = threshold
-        self.energy = threshold/4
+        self.energy = threshold/REPRODUCTION_CONSTANT
         self.vision = vision
         self.gen = gen
         self.pos = pos
         self.intent = Intent(None, None)
         self.lineage = lineage
+        self.life_divider = LIFE_DIVIDER
+        self.threshold_buffer = math.ceil(threshold/(self.life_divider))
+        self.ate = False
         pass 
+
 
     def get_lineage(self) -> int:
         return self.lineage

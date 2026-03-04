@@ -2,6 +2,7 @@ from ..Entities.animal import Animal
 from ..Entities.position import Position
 from ..Entities.world import World
 from ..Entities.intent import Intent
+from ..config import MOVE
 class ResolveMovementUseCase:
 
     def resolve_movement(self, animal: Animal, target: Position): 
@@ -10,7 +11,7 @@ class ResolveMovementUseCase:
     def execute(self, world: World):
         animals = world.get_animal_list()
         for key in list(animals.keys()):
-            if world.get_animal(key).get_intent().get_kind() == "MOVE":
+            if world.get_animal(key).get_intent().get_kind() == MOVE:
                 animal = world.get_animal(key)
                 target = world.get_animal(key).get_intent().get_target()
                 if world.has_animal(target):

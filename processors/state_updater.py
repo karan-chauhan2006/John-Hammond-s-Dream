@@ -14,26 +14,27 @@ class StateUpdater:
         state.avgET = data[3]
         state.avgH = data[4]
         state.avgV = data[5]
-        state.avgL = data[6]
-        state.avgFE = data[7]
-        state.avgGen = data[8]
-        state.maxAE = data[9]
-        state.maxET = data[10]
-        state.maxH = data[11]
-        state.maxV = data[12]
-        state.maxL = data[13]
-        state.maxFE = data[14]
-        state.maxGen = data[15]
-        state.minAE = data[16]
-        state.minET = data[17]
-        state.minH = data[18]
-        state.minV = data[19]
-        state.minL = data[20]
-        state.minFE = data[21]
-        state.minGen = data[22]
-        state.totalAE = data[23]
-        state.totalFE = data[24]
-        state.totalE = data[23] + data[24]
+        state.avgML = data[6]
+        state.avgL = data[7]
+        state.avgFE = data[8]
+        state.avgGen = data[9]
+        state.maxAE = data[10]
+        state.maxET = data[11]
+        state.maxH = data[12]
+        state.maxV = data[13]
+        state.maxL = data[14]
+        state.maxFE = data[15]
+        state.maxGen = data[16]
+        state.minAE = data[17]
+        state.minET = data[18]
+        state.minH = data[19]
+        state.minV = data[20]
+        state.minL = data[21]
+        state.minFE = data[22]
+        state.minGen = data[23]
+        state.totalAE = data[24]
+        state.totalFE = data[25]
+        state.totalE = data[24] + data[25]
 
     def compute_state(self, world: World) -> list:
         animals = len(world.animals)
@@ -42,6 +43,7 @@ class StateUpdater:
         avgET = 0.0
         avgH = 0.0
         avgV = 0.0
+        avgML = 0.0
         avgL = 0.0
         avgFE = None
         avgGen = 0.0
@@ -67,7 +69,8 @@ class StateUpdater:
                 totalAE += a.get_energy()
                 avgET += a.get_threshold()
                 avgH += a.get_hit()
-                avgL += a.get_life()
+                avgML += a.get_max_life()
+                avgL += a.get_max_life()-a.get_life()
                 avgV += a.get_vision()
                 avgGen += a.get_gen()
                 if a.get_gen() < minGen:
@@ -87,7 +90,7 @@ class StateUpdater:
                 if a.get_vision() < minV:
                     minV = a.get_vision()
                 if a.get_max_life() > maxL:
-                    maxL = a.get_life()
+                    maxL = a.get_max_life()
                 if a.get_max_life() < minL:
                     minL = a.get_max_life()
                 if a.get_threshold() > maxET:
@@ -98,14 +101,15 @@ class StateUpdater:
             avgET = avgET / animals
             avgH = avgH/animals
             avgV = avgV/animals
-            avgL = avgL/animals
+            avgML = avgML/animals
             avgGen = avgGen / animals
+            avgL = avgL / animals
         else:
             avgAE = 0.0
             avgET = 0.0
             avgH = 0
             avgV = 0
-            avgL = 0
+            avgML = 0
             avgGen = 0.0
             maxGen = 0
             maxAE = 0
@@ -120,6 +124,7 @@ class StateUpdater:
             minL = 0
             minET = 0
             totalAE = 0
+            avgL = 0
         
         if food >0:
             for f in list(world.get_food_list().values()):
@@ -135,7 +140,7 @@ class StateUpdater:
             minFE = 0.0
             totalFE = 0.0
         data = [animals,food,avgAE,avgET,avgH,avgV,
-                avgL,avgFE,avgGen,maxAE,maxET,maxH,
+                avgML,avgL,avgFE,avgGen,maxAE,maxET,maxH,
                 maxV,maxL,maxFE,maxGen,minAE,minET,
                 minH,minV,minL,minFE,minGen,totalAE,totalFE]
         return data

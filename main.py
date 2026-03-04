@@ -1,22 +1,29 @@
 from .Entities.world import World
-from .core.turn_resolver import Turn_Resolver
-from .core.spawner import Spawner
-from .core.runner import Runner
+from .Entities.spawn_data import SpawnData
+from .processors.turn_resolver import Turn_Resolver
+from .processors.spawner import Spawner
+from .processors.runner import Runner
 from .graphics.vizconfig import VizConfig
+from .data_processors.data_plotter import DataPlotter
+import random
 def main():
     W, H = 40,40
-    turns = 300
-
+    turns = 500
+    seed = 10
+    randomizer = random.Random(seed)
     # Seed makes runs reproducible; change/remove if you want true randomness.
-    world = World(W, H, seed=None)
-    resolver = Turn_Resolver()
-    spawner = Spawner(animal_units=100, food_units=1100, 
-                      life_range=[1,20], hit_range=[1,5],
-                       energy_range= [1,100], vision_range=[10,17],
-                        max_turns=turns )
+    world = World(W, H, randomizer)
+    spawn_data = SpawnData(animal_units=200, food_units=1000, 
+                      life_range=[1,50], hit_range=[1,10],
+                       energy_range= [1,100], vision_range=[10,15],
+                        max_turns=turns)
+    resolver = Turn_Resolver(spawn_data.get_mutate_list(), spawn_data.get_eng_list(), randomizer)
+    spawner = Spawner(spawn_data, randomizer)
     world = spawner.fill(world)
     viz = Runner(W, H, VizConfig(cell_size=18, fps=30, autoplay_steps_per_sec=1))
-    viz.run(world, resolver, max_turns=turns)
+    handler = viz.run(world, resolver, max_turns=turns)
+    path = handler.save_data(spawn_data.get_data(W,H))
+    DataPlotter(path).plot()
     
     # for t in range( turns + 1):
     #     if t!=0:

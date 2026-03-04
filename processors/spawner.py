@@ -1,0 +1,54 @@
+import random
+from typing import Optional
+from ..Entities.world import World
+from ..Entities.animal import Animal
+from ..Entities.food import Food
+from .state_updater import StateUpdater
+from ..Entities.spawn_data import SpawnData
+
+class Spawner:
+    spawn_data: SpawnData
+    state_updater: StateUpdater
+    randomizer: random.Random
+
+    def __init__(self, spawn_data: SpawnData, randomizer: random.Random):
+        self.spawn_data = spawn_data
+        self.state_updater = StateUpdater()
+        self.randomizer = randomizer
+
+    def fill(self, world: World):
+        world = self.spawn_animals(world)
+        world = self.spawn_food(world)
+        self.state_updater.execute(world)
+        return world
+        
+    def spawn_animals(self, world: World):
+        for i in range(self.spawn_data.animal_units):
+            try:
+                pos = world.random_empty_cell()
+            except RuntimeError:
+                break
+            hit = self.randomizer.choice(self.spawn_data.hit_range)
+            max_life = self.randomizer.choice(self.spawn_data.life_range)
+            threshold = self.randomizer.choice(self.spawn_data.energy_range)
+            vision = self.randomizer.choice(self.spawn_data.vision_range)
+            animal = Animal(hit, max_life, threshold, vision, 0, pos, lineage= i)
+            animal.set_birthed(True)
+            animal.set_birth_pos(pos)
+            world.add_animal(pos,animal)
+        return world
+
+
+    def spawn_food(self, world: World):
+        for i in range(self.spawn_data.food_units):
+            try:
+                pos = world.random_empty_cell()
+            except RuntimeError:
+                break
+            energy = self.randomizer.choice(self.spawn_data.energy_range)
+            food = Food(energy, pos)
+            world.add_food(pos, food)
+        return world
+    
+    
+        

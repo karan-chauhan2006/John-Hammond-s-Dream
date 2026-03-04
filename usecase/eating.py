@@ -17,3 +17,4 @@ class EatUseCase:
     def eat(self, animal: Animal, food: Food):
         energy = animal.get_energy()
         animal.set_energy(energy + food.get_energy())
+        animal.ate = True

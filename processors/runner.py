@@ -4,7 +4,7 @@ from ..graphics.vizconfig import VizConfig, clamp01, lerp, rgb
 from ..Entities.world import World
 from ..Entities.food import Food
 from ..Entities.animal import Animal
-from ..data_handler.data_handler import DataHandler
+from ..data_processors.data_handler import DataHandler
 class Runner:
     data_handler: DataHandler
     def __init__(self, W: int, H: int, cfg: VizConfig):
@@ -36,8 +36,7 @@ class Runner:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit(0)
+                    restart = True
 
                 if event.key == pygame.K_SPACE:
                     step_once = True
@@ -120,7 +119,7 @@ class Runner:
 
         pygame.display.flip()
 
-    def run(self, world: World, resolver, max_turns=1000):
+    def run(self, world: World, resolver, max_turns=1000, ):
         dt = 0.0
         self.turn = 0
         self.autoplay = False
@@ -160,7 +159,7 @@ class Runner:
             # If you have combat damage stored, pass it; else None
             combat_damage = world.get_state().totalCombat
             self.draw(world, combat_damage=combat_damage)
-        self.data_handler.save_data()
+        return self.data_handler
 
     
             
