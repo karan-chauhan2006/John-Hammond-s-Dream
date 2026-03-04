@@ -6,23 +6,24 @@ from .processors.runner import Runner
 from .graphics.vizconfig import VizConfig
 from .data_processors.data_plotter import DataPlotter
 import random
+from .config import W, H, TURNS, SEED, ANIMAL_UNITS, FOOD_UNITS
+from .config import LIFE_RANGE, HIT_RANGE, ENERGY_RANGE, VISION_RANGE
 def main():
-    W, H = 40,40
     turns = 500
     seed = 10
-    randomizer = random.Random(seed)
+    randomizer = random.Random(SEED)
     # Seed makes runs reproducible; change/remove if you want true randomness.
     world = World(W, H, randomizer)
-    spawn_data = SpawnData(animal_units=200, food_units=1000, 
-                      life_range=[1,50], hit_range=[1,10],
-                       energy_range= [1,100], vision_range=[10,15],
-                        max_turns=turns)
+    spawn_data = SpawnData(animal_units=ANIMAL_UNITS, food_units=FOOD_UNITS, 
+                      life_range=LIFE_RANGE, hit_range=HIT_RANGE,
+                       energy_range= ENERGY_RANGE, vision_range=VISION_RANGE,
+                        max_turns=TURNS)
     resolver = Turn_Resolver(spawn_data.get_mutate_list(), spawn_data.get_eng_list(), randomizer)
     spawner = Spawner(spawn_data, randomizer)
     world = spawner.fill(world)
     viz = Runner(W, H, VizConfig(cell_size=18, fps=30, autoplay_steps_per_sec=1))
     handler = viz.run(world, resolver, max_turns=turns)
-    path = handler.save_data(spawn_data.get_data(W,H))
+    path = handler.save_data(spawn_data.get_data())
     DataPlotter(path).plot()
     
     # for t in range( turns + 1):
