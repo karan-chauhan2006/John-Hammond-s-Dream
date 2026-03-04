@@ -18,6 +18,7 @@ The simulation evolves in discrete turns and often produces:
 * Population oscillations
 * Lineage collapses
 * Extinction events
+
 note: The README is currently describing an older version of the project. New processes and changes have been made. They will soon be reflected in the documentation (2026-03-04, KC)
 ---
 
