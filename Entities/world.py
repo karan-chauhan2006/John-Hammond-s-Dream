@@ -11,10 +11,10 @@ class World:
     foods: dict[Position, Food]
     state: State
 
-    def __init__(self, W: int, H: int, seed: Optional[int] = None):
+    def __init__(self, W: int, H: int, randomizer: random.Random):
         self.W = W
         self.H = H
-        self.rng = random.Random(seed)
+        self.rng = randomizer
         self.animals = {}
         self.foods = {}
         self.state = State()

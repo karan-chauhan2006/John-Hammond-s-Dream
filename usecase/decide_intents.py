@@ -3,19 +3,24 @@ from ..Entities.intent import Intent
 from ..Entities.animal import Animal
 from ..Entities.position import Position
 from ..Entities.world import World
-
+from ..config import ATTACK, REPRODUCE, MOVE
 class DecideIntentUseCase:
+    randomizer: random.Random
+
+    def __init__(self, randomizer: random.Random):
+        self.randomizer = randomizer
+        
     
     def execute(self, world: World):
         animals = world.get_animal_list()
         for key in list(animals.keys()):
             animal = world.get_animal(key)
             if self.check_attack(world, key, animal):
-               animal.set_intent(Intent("ATTACK", key))
+               animal.set_intent(Intent(ATTACK, key))
             elif self.check_reproduce(world, key):
-                animal.set_intent(Intent("REPRODUCE", self.choose_birth(world, key)))
+                animal.set_intent(Intent(REPRODUCE, self.choose_birth(world, key)))
             else: 
-                animal.set_intent( Intent("MOVE", self.choose_direction(world, key)))
+                animal.set_intent( Intent(MOVE, self.choose_direction(world, key)))
             animal.set_birthed(False)
     
     def check_attack(self ,world: World, pos: Position, animal: Animal) -> bool:
@@ -61,7 +66,7 @@ class DecideIntentUseCase:
     def choose_direction(self, world: World, pos: Position) -> Position:
         loc = self.find_loc(world,pos)
         if loc == pos:
-            return random.choice(world.neighbours(pos))
+            return self.randomizer.choice(world.neighbours(pos))
         else:
             min_dis = world.distance(pos, loc)
             dis_x = world.distance_x(pos, loc)
@@ -82,7 +87,7 @@ class DecideIntentUseCase:
             if len(final) == 0:
                 return pos
             else:
-                return random.choice(final)
+                return self.randomizer.choice(final)
 
 
         
@@ -126,5 +131,5 @@ class DecideIntentUseCase:
         for n in neighbours:
             if world.is_empty(n):
                 empty.append(n)
-        return random.choice(empty)
+        return self.randomizer.choice(empty)
                     

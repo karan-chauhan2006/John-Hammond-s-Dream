@@ -9,10 +9,12 @@ from ..Entities.spawn_data import SpawnData
 class Spawner:
     spawn_data: SpawnData
     state_updater: StateUpdater
+    randomizer: random.Random
 
-    def __init__(self, spawn_data: SpawnData):
+    def __init__(self, spawn_data: SpawnData, randomizer: random.Random):
         self.spawn_data = spawn_data
         self.state_updater = StateUpdater()
+        self.randomizer = randomizer
 
     def fill(self, world: World):
         world = self.spawn_animals(world)
@@ -26,10 +28,10 @@ class Spawner:
                 pos = world.random_empty_cell()
             except RuntimeError:
                 break
-            hit = random.choice(self.spawn_data.hit_range)
-            max_life = random.choice(self.spawn_data.life_range)
-            threshold = random.choice(self.spawn_data.energy_range)
-            vision = random.choice(self.spawn_data.vision_range)
+            hit = self.randomizer.choice(self.spawn_data.hit_range)
+            max_life = self.randomizer.choice(self.spawn_data.life_range)
+            threshold = self.randomizer.choice(self.spawn_data.energy_range)
+            vision = self.randomizer.choice(self.spawn_data.vision_range)
             animal = Animal(hit, max_life, threshold, vision, 0, pos, lineage= i)
             animal.set_birthed(True)
             animal.set_birth_pos(pos)
@@ -43,7 +45,7 @@ class Spawner:
                 pos = world.random_empty_cell()
             except RuntimeError:
                 break
-            energy = random.choice(self.spawn_data.energy_range)
+            energy = self.randomizer.choice(self.spawn_data.energy_range)
             food = Food(energy, pos)
             world.add_food(pos, food)
         return world

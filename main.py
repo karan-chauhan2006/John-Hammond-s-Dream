@@ -5,18 +5,20 @@ from .processors.spawner import Spawner
 from .processors.runner import Runner
 from .graphics.vizconfig import VizConfig
 from .data_processors.data_plotter import DataPlotter
+import random
 def main():
     W, H = 40,40
-    turns = 5000
-
+    turns = 500
+    seed = 10
+    randomizer = random.Random(seed)
     # Seed makes runs reproducible; change/remove if you want true randomness.
-    world = World(W, H, seed = None)
-    spawn_data = SpawnData(animal_units=100, food_units=600, 
+    world = World(W, H, randomizer)
+    spawn_data = SpawnData(animal_units=200, food_units=1000, 
                       life_range=[1,50], hit_range=[1,10],
-                       energy_range= [1,100], vision_range=[10,14],
+                       energy_range= [1,100], vision_range=[10,15],
                         max_turns=turns)
-    resolver = Turn_Resolver(spawn_data.get_mutate_list(), spawn_data.get_eng_list())
-    spawner = Spawner(spawn_data)
+    resolver = Turn_Resolver(spawn_data.get_mutate_list(), spawn_data.get_eng_list(), randomizer)
+    spawner = Spawner(spawn_data, randomizer)
     world = spawner.fill(world)
     viz = Runner(W, H, VizConfig(cell_size=18, fps=30, autoplay_steps_per_sec=1))
     handler = viz.run(world, resolver, max_turns=turns)

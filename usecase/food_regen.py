@@ -1,4 +1,4 @@
-from ..config import MAXPRL, MINPRL, STABILITY_FACTOR, TAU
+from ..config import MAXPRL, MINPRL, STABILITY_FACTOR, TAU, OSCILLATION_PERCENT
 import math
 from ..Entities.world import World
 from ..Entities.spawn_data import SpawnData
@@ -15,11 +15,13 @@ class FoodRegenUseCase:
     prevfood: int = 0
     eng_range: list 
     o_mode: bool = False
+    randomizer: random.Random
     r: int #direction of oscillation
     f: int # amplitude of oscilation
 
-    def __init__(self,eng_range):
+    def __init__(self,eng_range, randomizer: random.Random):
         self.eng_range = eng_range
+        self.randomizer = randomizer
 
     def caculate(self, world: World):
         animal = world.get_state().animals
@@ -28,7 +30,10 @@ class FoodRegenUseCase:
         maxH = world.get_state().maxH
         totalCombat = world.get_state().totalCombat
         if animal > 0:
-            Nfactor = min((totalCombat/animal)-1,4)
+            if -self.cooldown > 2*TAU: 
+                Nfactor = min((totalCombat/animal)-1+2*TAU+self.cooldown,4)
+            else: 
+                Nfactor = min((totalCombat/animal)-1,4)
             self.min_bound = minH * Nfactor * animal * self.stability_factor
             self.max_bound = maxH * Nfactor * animal * self.stability_factor
             self.avg_bound = avgH * Nfactor * animal * self.stability_factor
@@ -40,7 +45,7 @@ class FoodRegenUseCase:
     
     def execute(self, world: World):
         food = world.get_state().food
-        dfood = math.fabs(food - self.prevfood)
+        dfood = min(food - self.prevfood,0)
         pfactor = self.get_peaceful_factor()
         animal = world.get_state().animals
         maxSpace = (world.get_space()) - animal - food - math.ceil(0.05*world.get_space()) 
@@ -78,10 +83,10 @@ class FoodRegenUseCase:
     def get_ofactor(self, world: World):
         if -self.cooldown >= 2*TAU:
             if not self.o_mode:
-                self.r = random.choice([1,-1])
+                self.r = self.randomizer.choice([1,-1])
                 self.f = world.get_state().food
                 self.o_mode = True
-            return self.r * self.f * math.sin(math.pi *(-self.cooldown - 2*TAU)/(2*TAU))
+            return OSCILLATION_PERCENT*self.r * self.f * math.sin(math.pi *(-self.cooldown - 2*TAU)/(2*TAU))
         else:
             self.o_mode = False
             return 1
@@ -92,6 +97,6 @@ class FoodRegenUseCase:
                 pos = world.random_empty_cell()
             except RuntimeError:
                 break
-            energy = random.choice(self.eng_range)
+            energy = self.randomizer.choice(self.eng_range)
             food = Food(energy, pos)
             world.add_food(pos, food)
