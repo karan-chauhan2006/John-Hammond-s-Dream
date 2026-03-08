@@ -34,7 +34,7 @@ class SpawnData:
     def get_data(self) -> list:
         return [["Map Width", W, W],
                 ["Map Height", H, H],
-                ["Seed", SEED, SEED]
+                ["Seed", SEED, SEED],
                 ["max turns", self.max_turns, self.max_turns],
                 ["#animals", self.animal_units, self.animal_units], 
                 ["#food", self.food_units, self.food_units], 

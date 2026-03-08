@@ -6,21 +6,24 @@
 
 ## Overview
 
-Jhon Hammond’s Dream is a turn-based spatial evolutionary simulation running on a 2D toroidal grid.
+Jhon Hammond’s Dream is an agent based ecosystem simulator. Animals live on a toroidal grid, compete for food, fight neighbours, reproduce and evolve traits over time. The simulation explored how simple local rules produce complex ecological and evolutionary dynamics.
 
-Autonomous agents (*Animals*) interact locally with resources (*Food*) through movement, combat, reproduction, mutation, aging, and death.
-No behaviors are scripted beyond core mechanics — complex dynamics emerge purely from local rules and selection pressure.
+The system contains several interacting processes:
 
-The simulation evolves in discrete turns and often produces:
+- Movement and spatial interaction
+- Food consumption and regeneration
+- Combat between animals
+- Reproduction and mutation
+- Evolution of traits across generations
 
-* Generational arms races
-* Trait specialization
-* Population oscillations
-* Lineage collapses
-* Extinction events
+These interactions produce emergent behaviours such as population oscillations, trait botllenecks, ecological collapse, and lineage dominance.
 
 ---
+# Docummentation Notice
+- Official docummentation will soon be added under the 'docs/' directory
 
+- 2026-03-04
+---
 # Core Concepts
 
 ## The World
@@ -71,8 +74,9 @@ x, y
 
   * It converts into Food
   * `food.energy = animal.energy at death`
-
-Food decays, forming an energy sink.
+* Regenerates:
+  * Depending upon total combat, food regenrates
+  * The amount of regenrated food depends on a variety of factors
 
 ---
 
@@ -91,6 +95,9 @@ gen
 
 cooldown_attack
 cooldown_aging
+lineage
+life_divider
+ate
 
 x, y
 ```
@@ -116,6 +123,9 @@ Base health at birth.
 
 **threshold**
 Minimum energy required to reproduce.
+changes as the animal grows old
+increases if the animal ate in the last phase of life
+else decreases
 
 **vision**
 Food detection radius (Manhattan distance).
@@ -130,8 +140,17 @@ Generation number.
 Prevents attacking while active.
 
 **cooldown_aging**
-Prevents life loss while active.
+Prevents life loss due to aging while active.
 
+**lineage**
+a unique lineage number which is shared 
+by all members coming from the same parent
+
+**life_divider**
+determines the length of a phase in max_life
+
+**ate**
+boolean value indicating if food was eaten in the last phase
 ---
 
 # Initialization
@@ -145,7 +164,7 @@ life_range
 hit_range
 energy_range
 vision_range
-max_turns (optional)
+max_turns
 ```
 
 ### Animal Creation

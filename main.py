@@ -9,8 +9,6 @@ import random
 from .config import W, H, TURNS, SEED, ANIMAL_UNITS, FOOD_UNITS
 from .config import LIFE_RANGE, HIT_RANGE, ENERGY_RANGE, VISION_RANGE
 def main():
-    turns = 500
-    seed = 10
     randomizer = random.Random(SEED)
     # Seed makes runs reproducible; change/remove if you want true randomness.
     world = World(W, H, randomizer)
@@ -22,7 +20,7 @@ def main():
     spawner = Spawner(spawn_data, randomizer)
     world = spawner.fill(world)
     viz = Runner(W, H, VizConfig(cell_size=18, fps=30, autoplay_steps_per_sec=1))
-    handler = viz.run(world, resolver, max_turns=turns)
+    handler = viz.run(world, resolver, max_turns=TURNS)
     path = handler.save_data(spawn_data.get_data())
     DataPlotter(path).plot()
     

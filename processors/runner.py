@@ -11,11 +11,15 @@ class Runner:
         pygame.init()
         self.W, self.H = W, H
         self.cfg = cfg
-        self.width_px = W * cfg.cell_size
-        self.height_px = H * cfg.cell_size
+        
         self.data_handler = DataHandler()
 
-        self.screen = pygame.display.set_mode((self.width_px, self.height_px))
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.screen_width, self.screen_height = self.screen.get_size()
+
+        # size of one grid box
+        self.cell_w = self.screen_width / self.W
+        self.cell_h = self.screen_height / self.H
         pygame.display.set_caption("Ecosystem")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("consolas", 16)
@@ -56,7 +60,8 @@ class Runner:
         return step_once, restart
 
     def draw(self, world: World, combat_damage=None):
-        cs = self.cfg.cell_size
+        cw = self.cell_w
+        ch = self.cell_h
         self.screen.fill((0, 0, 0))
 
         # --- Draw food first (so animals draw on top) ---
@@ -66,7 +71,12 @@ class Runner:
             # map food energy -> green brightness
             g = clamp01(0.2 + 0.03 * e)
             color = rgb(0, 255 * g, 0)
-            rect = pygame.Rect(food.get_pos().x * cs, food.get_pos().y * cs, cs, cs)
+            rect = pygame.Rect(
+                    int(food.get_pos().x * cw),
+                    int(food.get_pos().y * ch),
+                    int(cw) + 1,
+                    int(ch) + 1
+                    )
             pygame.draw.rect(self.screen, color, rect)
 
         # --- Draw animals ---
@@ -93,16 +103,24 @@ class Runner:
                 b = min(200, 60 * cd)
 
             color = rgb(r, g, b)
-            rect = pygame.Rect(a.get_pos().x * cs, a.get_pos().y * cs, cs, cs)
+            rect = pygame.Rect(
+                    int(a.get_pos().x * cw),
+                    int(a.get_pos().y * ch),
+                    int(cw) + 1,
+                    int(ch) + 1
+                    )
             pygame.draw.rect(self.screen, color, rect)
 
         # --- Optional grid lines ---
-        if self.cfg.grid_lines and cs >= 10:
+        if self.cfg.grid_lines and self.cell_w >= 6 and self.cell_h >= 6:
             line_color = (25, 25, 25)
             for x in range(self.W + 1):
-                pygame.draw.line(self.screen, line_color, (x * cs, 0), (x * cs, self.height_px))
+                px = int(x * cw)
+                pygame.draw.line(self.screen, line_color, (px, 0), (px, self.screen_height))
+
             for y in range(self.H + 1):
-                pygame.draw.line(self.screen, line_color, (0, y * cs), (self.width_px, y * cs))
+                py = int(y * ch)
+                pygame.draw.line(self.screen, line_color, (0, py), (self.screen_width, py))
 
         # --- HUD text (top-left) ---
         hud = f"Turn {self.turn:04d} | A={len(world.animals)} F={len(world.foods)} | "

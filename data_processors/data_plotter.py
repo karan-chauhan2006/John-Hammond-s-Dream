@@ -1,7 +1,7 @@
 from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
-from ..config import PLOT_DATA, STABILITY_FACTOR, PLOTS
+from ..config import DATA, STABILITY_FACTOR, PLOTS
 import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
@@ -11,7 +11,7 @@ class DataPlotter:
     def __init__(self, path: Path):
         self.data_path = path
         name = path.name
-        self.result_path = PLOT_DATA / name
+        self.result_path = DATA / name
         self.result_path.mkdir(parents= True, exist_ok= True)
 
     def plot(self):
@@ -35,10 +35,8 @@ class DataPlotter:
           turn = turn_data["Turn"]
           animal = turn_data["#animals"]
           food = turn_data["#food"]
-          combat = turn_data["totalCombat"]
           fig.add_trace(go.Scatter(x = turn, y = animal, mode = "lines", name = f"#animals: {spawn_data['Min Val'][0]}"), row = 1, col = 1)
           fig.add_trace(go.Scatter(x = turn, y = food, mode = "lines", name = f"#food: {spawn_data['Min Val'][1]}"), row = 1, col =1)
-          fig.add_trace(go.Scatter(x = turn, y = combat, mode = "lines", name = f"total combat"), row = 1, col = 1)
           
 
     def t_plot_AE_ET(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
@@ -131,7 +129,7 @@ class DataPlotter:
          fig.add_trace(go.Scatter(x = turn+1, y = min_bound, mode = "lines", name = "min_bound"), row = 3, col = 3)
          fig.add_trace(go.Scatter(x = turn+1, y = avg_bound, mode = "lines", name = "avg_bound"), row = 3, col = 3)
          fig.add_trace(go.Scatter(x = turn+1, y = max_bound, mode = "lines", name = "max_bound"), row = 3, col = 3)
-         fig.add_trace(go.Scatter(x = turn, y = totalcombat, mode = "lines", name = "total Combat", showlegend = False), row = 3, col = 3)
+         fig.add_trace(go.Scatter(x = turn, y = totalcombat, mode = "lines", name = "total Combat"), row = 3, col = 3)
          
 
     def t_format_and_save(self, fig):

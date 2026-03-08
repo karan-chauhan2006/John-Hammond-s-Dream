@@ -30,8 +30,8 @@ class FoodRegenUseCase:
         maxH = world.get_state().maxH
         totalCombat = world.get_state().totalCombat
         if animal > 0:
-            if -self.cooldown > 2*TAU: 
-                Nfactor = min((totalCombat/animal)-1+2*TAU+self.cooldown,4)
+            if self.cooldown <= -2*TAU: 
+                Nfactor = min((totalCombat/animal)-1+ 2*TAU +100*self.cooldown,4)
             else: 
                 Nfactor = min((totalCombat/animal)-1,4)
             self.min_bound = minH * Nfactor * animal * self.stability_factor
@@ -44,17 +44,29 @@ class FoodRegenUseCase:
         self.prevfood = world.get_state().food
     
     def execute(self, world: World):
-        food = world.get_state().food
-        dfood = min(food - self.prevfood,0)
-        pfactor = self.get_peaceful_factor()
-        animal = world.get_state().animals
-        maxSpace = (world.get_space()) - animal - food - math.ceil(0.05*world.get_space()) 
-        nfood = math.ceil(self.get_ofactor(world)*min(dfood + math.ceil(pfactor * food), maxSpace))
+        
+        if self.cooldown <= -2*TAU:
+             ofood = self.get_ofood(world)
+             food = world.get_state().food
+             self.add_food(ofood, world)
+             if world.get_state().totalCombat < self.min_bound or self.min_bound <= 0:
+                self.cooldown -= 3
+             elif world.get_state().totalCombat >= self.min_bound and world.get_state().totalCombat < self.avg_bound:
+                self.cooldown -= 1
+             elif world.get_state().totalCombat >= self.avg_bound and world.get_state().totalCombat < self.max_bound:
+                self.cooldown += 3
+             elif world.get_state().totalCombat >= self.max_bound:
+                self.cooldown += 5
+        
+        elif self.cooldown <=0 and -2*TAU < self.cooldown:
+            food = world.get_state().food
+            dfood = min(food - self.prevfood,0)
+            pfactor = self.get_peaceful_factor()
+            nfood = math.ceil((dfood + math.ceil(pfactor * food)))
 
-        if self.cooldown <=0:
             if world.get_state().totalCombat < self.min_bound or self.min_bound <= 0:
                 self.add_food(math.ceil(nfood), world)
-                self.cooldown -= 1
+                self.cooldown -= 3
             elif (world.get_state().totalCombat >= self.min_bound) and (world.get_state().totalCombat < self.avg_bound):
                 self.add_food(math.ceil(0.5*nfood), world)
                 self.cooldown -= 1
@@ -67,7 +79,7 @@ class FoodRegenUseCase:
             if world.get_state().totalCombat < self.min_bound or self.min_bound <= 0:
                 self.cooldown -= 3
             elif world.get_state().totalCombat >= self.min_bound and world.get_state().totalCombat < self.avg_bound:
-                self.cooldown -= 2
+                self.cooldown -= 1
             elif world.get_state().totalCombat >= self.avg_bound and world.get_state().totalCombat < self.max_bound:
                 self.cooldown += 3
             elif world.get_state().totalCombat >= self.max_bound:
@@ -76,17 +88,20 @@ class FoodRegenUseCase:
     
     def get_peaceful_factor(self):
         if TAU - self.cooldown == 0:
-            return self.minPRL + (self.maxPRL - self.minPRL)*(-self.cooldown)/(TAU - self.cooldown + 10e-5)
+            return self.minPRL + (self.maxPRL - self.minPRL)*(min(-self.cooldown, 2*TAU))/(TAU - self.cooldown + 10e-5)
         else:
-            return self.minPRL + (self.maxPRL - self.minPRL)*(-self.cooldown)/(TAU - self.cooldown)
+            return self.minPRL + (self.maxPRL - self.minPRL)*(min(-self.cooldown, 2*TAU))/(TAU - self.cooldown)
 
-    def get_ofactor(self, world: World):
+    def get_ofood(self, world: World):
         if -self.cooldown >= 2*TAU:
             if not self.o_mode:
+                food = world.get_state().food
+                dfood = abs(food - self.prevfood)
+                pfactor = self.get_peaceful_factor()
+                self.f = math.ceil((dfood + math.ceil(pfactor * food)))
                 self.r = self.randomizer.choice([1,-1])
-                self.f = world.get_state().food
                 self.o_mode = True
-            return OSCILLATION_PERCENT*self.r * self.f * math.sin(math.pi *(-self.cooldown - 2*TAU)/(2*TAU))
+            return math.ceil((OSCILLATION_PERCENT*self.r * math.sin(math.pi *(-self.cooldown - 2*TAU)/(2*TAU))+1)*self.f)
         else:
             self.o_mode = False
             return 1

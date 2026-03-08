@@ -1,38 +1,38 @@
 from pathlib import Path
-
+import math
 
 
 # -------------------- MUTABLE CONSTANTS ---------------
 # ------------- FEEL FREE TO PLAY AROUND WITH ----------
 
 # ****** SPAWN DATA ******
-W: int = 40
-H: int = 40
-TURNS: int = 500
-SEED: int = 10
-ANIMAL_UNITS: int = 200
-FOOD_UNITS: int = 1000
+W: int = 50
+H: int = 50
+TURNS: int = 10000
+SEED: int = 20260607
+ANIMAL_UNITS: int = 750
+FOOD_UNITS: int = 1250
 LIFE_RANGE: list[int] = [1,50]
 HIT_RANGE: list[int] = [1,10]
-ENERGY_RANGE: list[int] = [1,1000]
-VISION_RANGE: list[int] = [10,15]
+ENERGY_RANGE: list[int] = [1,100]
+VISION_RANGE: list[int] = [15,23]
 # ************************
 # lists in this SPAWN DATA should be of length 2
 # with min value at pos 0 and max value at pos 1 
 
 # ***** FOOD REGEN *****
-STABILITY_FACTOR: float = 0.25
-MAXPRL: float = 0.4
+STABILITY_FACTOR: float = 0.19
+MAXPRL: float = 0.09
 MINPRL: float = 0.01
-TAU: int = 25
-OSCILLATION_PERCENT: float = 0.15
+TAU: int = 150
+OSCILLATION_PERCENT: float = 0.1
 # **********************
 
 # ***** REPRODUCTION & MUTATION ******
 REPRODUCTION_CONSTANT: float|int = 4
 MUTATION_CONSTANT: float = 0.01
 MUTATION_CHOICE: list[int] = [-1,0,1] 
-LIFE_DIVIDER: int = 10
+LIFE_DIVIDER: int = 5
 # ***********************************
 # For MUTATION_CHOICE, It is advised to keep the list
 # in increasing order, and to keep all ints between min
@@ -44,8 +44,6 @@ LIFE_DIVIDER: int = 10
 # **** PATHS *****
 ROOT = Path(__file__).resolve().parents[0]
 DATA = ROOT / "data"
-RAW_DATA = DATA / "raw"
-PLOT_DATA = DATA / "plot"
 # ****************
 
 # ***** DATA HANDELING *****

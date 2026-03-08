@@ -2,7 +2,7 @@ import pandas as pd
 from ..Entities.state import State
 from datetime import datetime
 from pathlib import Path
-from ..config import RAW_DATA, CLOUMNS
+from ..config import DATA, CLOUMNS
 class DataHandler: 
     data = list[list]
     columns = CLOUMNS
@@ -23,8 +23,8 @@ class DataHandler:
     def create_dir(self) -> Path:
         now = datetime.now()
         name = now.strftime("%Y_%m_%d_%H_%M_%S")
-        (RAW_DATA / name).mkdir()
-        return RAW_DATA / name
+        (DATA / name).mkdir()
+        return DATA / name
     
     def save_spawn_data(self, path: Path, spawn_data: list):
         df = pd.DataFrame(spawn_data, columns=["Trait", "Min Val", "Max Val"])

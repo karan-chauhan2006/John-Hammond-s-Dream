@@ -9,6 +9,7 @@ class Animal:
     life: float
     energy: float
     threshold: float
+    min_threshold: float
     vision: float
     gen: int = 0
     intent: Intent
@@ -29,6 +30,7 @@ class Animal:
         self.max_life = max_life
         self.life = max_life
         self.threshold = threshold
+        self.min_threshold = threshold
         self.energy = threshold/REPRODUCTION_CONSTANT
         self.vision = vision
         self.gen = gen
