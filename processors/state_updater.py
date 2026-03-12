@@ -35,6 +35,10 @@ class StateUpdater:
         state.totalAE = data[24]
         state.totalFE = data[25]
         state.totalE = data[24] + data[25]
+        state.mode = data[26]
+        state.E_indicator = data[27]
+        state.EDM = data[28]
+        state.RDM = data[29]
 
     def compute_state(self, world: World) -> list:
         animals = len(world.animals)
@@ -63,6 +67,11 @@ class StateUpdater:
         minFE = 10e10
         totalAE = 0.0
         totalFE = 0.0
+        mode = ""
+        E_indicator = 0
+        edm = 0
+        rdm = 0
+        
 
         if animals > 0:
             for a in list(world.get_animal_list().values()):
@@ -134,15 +143,49 @@ class StateUpdater:
                 if f.get_energy() < minFE:
                     minFE = f.get_energy()
             avgFE = totalFE/food
+            edm = (avgET-avgAE)/avgFE
+            rdm = edm*100/food
         else:
             avgFE = 0.0
             maxFE = 0.0
             minFE = 0.0
             totalFE = 0.0
+            rdm = 10e3
+            edm = -10
+
+        minb = world.get_state().min_bound
+        avgb = world.get_state().avg_bound
+        maxb = world.get_state().max_bound
+        tc = world.get_state().totalCombat
+        o_mode = world.get_state().o_mode
+
+        if o_mode:
+            mode = "O"
+        elif tc < minb or minb <= 0:
+            mode = "FP"
+        elif minb <= tc and tc < avgb:
+            mode = "FNP"
+        elif avgb <= tc and tc < maxb:
+            mode = "FNW"
+        else:
+            mode = "FW"
+
+        if animals > 20:
+            E_indicator = 0
+        elif 10 < animals and animals <= 20:
+            E_indicator = 0.25 + (20-animals)*0.25/10
+        elif 5 < animals and animals <= 10:
+            E_indicator = 0.5 + (10-animals)*0.25/5
+        else:
+            E_indicator = 0.75 + (5-animals)*0.25/4 
+
+
+
         data = [animals,food,avgAE,avgET,avgH,avgV,
                 avgML,avgL,avgFE,avgGen,maxAE,maxET,maxH,
                 maxV,maxL,maxFE,maxGen,minAE,minET,
-                minH,minV,minL,minFE,minGen,totalAE,totalFE]
+                minH,minV,minL,minFE,minGen,totalAE,totalFE,
+                mode, E_indicator, edm, rdm]
         return data
 
    

@@ -2,7 +2,7 @@ from ..Entities.animal import Animal
 from ..Entities.position import Position
 from ..Entities.world import World
 from ..Entities.intent import Intent
-from ..config import ATTACK
+from .config import ATTACK
 class ResolveAttackUseCase:
 
     def execute(self, world: World):

@@ -24,6 +24,6 @@ class AgeUseCase:
                     animal.threshold += animal.threshold_buffer
                 else:
                     animal.threshold -= animal.threshold
-            if animal.threshold <= 0:
-                animal.threshold = 1
+            if animal.threshold < animal.min_threshold:
+                animal.threshold = animal.min_threshold
             animal.ate = False

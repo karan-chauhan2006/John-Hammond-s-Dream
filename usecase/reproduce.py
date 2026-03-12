@@ -3,7 +3,8 @@ from ..Entities.world import World
 from ..Entities.intent import Intent
 from ..Entities.animal import Animal
 from ..Entities.food import Food
-from ..config import MUTATION_CHOICE, REPRODUCE
+from ..config import MUTATION_CHOICE
+from .config import REPRODUCE
 import math
 class ReproduceUseCase:
     mutate_list: list #HLTV

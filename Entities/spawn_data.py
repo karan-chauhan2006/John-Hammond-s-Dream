@@ -1,6 +1,7 @@
 from typing import Optional
 from ..config import MUTATION_CONSTANT, STABILITY_FACTOR, MAXPRL
-from ..config import MINPRL, TAU, REPRODUCTION_CONSTANT, MUTATION_CHOICE
+from ..config import MINPRL, TAU, REPRODUCTION_CONSTANT, OSCILLATION_PERCENT
+from ..config import LIFE_DIVIDER, SEED, MUTATION_CHOICE, W,H, VERSION
 class SpawnData:
     animal_units : int
     food_units: int
@@ -9,11 +10,12 @@ class SpawnData:
     energy_range: list[float]
     vision_range: list[float]
     max_turns: int = -1
+    version: str
 
     def __init__(self, animal_units: int, food_units: int, 
                  life_range: list[float], hit_range: list[float],
                  energy_range: list[float], vision_range: list[float],
-                 max_turns: Optional[int]=-1):
+                max_turns: int):
         self.animal_units = animal_units
         self.food_units = food_units
         self.life_range = []
@@ -30,21 +32,26 @@ class SpawnData:
             self.vision_range.append(vision_range[0]+i)
         self.max_turns = max_turns
     
-    def get_data(self, W: int, H: int) -> list:
-        return [["#animals", self.animal_units, self.animal_units], 
+    def get_data(self) -> list:
+        return [["Map Width", W, W],
+                ["Map Height", H, H],
+                ["Seed", SEED, SEED],
+                ["max turns", self.max_turns, self.max_turns],
+                ["#animals", self.animal_units, self.animal_units], 
                 ["#food", self.food_units, self.food_units], 
                 ["hit range", self.hit_range[0], self.hit_range[-1]],
                 ["life range", self.life_range[0], self.life_range[-1]],
                 ["vision range", self.vision_range[0], self.vision_range[-1]],
                 ["energy range", self.energy_range[0], self.energy_range[-1]],
-                ["max turns", self.max_turns, self.max_turns],
-                ["Map Width", W, W],
-                ["Map Height", H, H],
-                ["Peace Regen Limit", MINPRL, MAXPRL],
                 ["Stability factor", STABILITY_FACTOR, STABILITY_FACTOR],
+                ["Peace Regen Limit", MINPRL, MAXPRL],
                 ["Half cycle", TAU, TAU],
+                ["Oscillation percent", OSCILLATION_PERCENT, OSCILLATION_PERCENT],
+                ["Reproduction constant", REPRODUCTION_CONSTANT, REPRODUCTION_CONSTANT],
                 ["Mutation constant", MUTATION_CONSTANT, MUTATION_CONSTANT],
-                ["Mutation Choice", MUTATION_CHOICE[0], MUTATION_CHOICE[-1]]]
+                ["Mutation Choice", MUTATION_CHOICE[0], MUTATION_CHOICE[-1]],
+                ["Life divider", LIFE_DIVIDER, LIFE_DIVIDER],
+                ["Version", VERSION, VERSION]]
     
     def get_mutate_list(self):
         #HLTV
