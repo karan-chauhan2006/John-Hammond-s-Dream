@@ -5,6 +5,7 @@ class State:
     turn: int = -1
     animals: int = 0
     food: int = 0
+    # traits max min avg
     avgAE: float = None
     avgET: float = None
     avgH: float = None
@@ -27,10 +28,26 @@ class State:
     minL: float = 10e10
     minFE: float = 10e10
     minGen: int = 10e10
+    # aspects total
     totalAE: float = None
     totalFE: float = None
     totalCombat: float = 0.0
     totalE: float = None
+    # food regen data 
+    Nfactor: float = 0.0
+    min_bound: float = 0.0
+    avg_bound: float = 0.0
+    max_bound: float = 0.0
+    cooldown: int = 0.0
+    mode: str = ""
+    peaceful_factor: float = 0.0
+    food_added: int = 0
+    o_mode: bool = False
+    # indicators
+    E_indicator: float = None
+    EDM: float = None# energy death measure
+    RDM: float = None # resource death measure 
+    
 
     def get_arr(self) -> list:
         return [self.turn, self.animals, self.food, self.avgAE, self.avgET,
@@ -38,11 +55,27 @@ class State:
                 self.maxAE, self.maxET, self.maxH, self.maxV, self.maxL,
                 self.maxFE, self.maxGen, self.minAE, self.minET, self.minH,
                 self.minV, self.minL, self.minFE, self.minGen, self.totalAE,
-                self.totalFE, self.totalE, self.totalCombat]
+                self.totalFE, self.totalE, self.totalCombat, self.Nfactor, self.min_bound,
+                self.avg_bound, self.max_bound, self.cooldown, self.mode, self.peaceful_factor, self.food_added,
+                self.E_indicator, self.EDM, self.RDM]
     
 
     def set_total_combat(self, combat: int):
         self.totalCombat = combat
+
+    def set_regen_metric_data(self, data: list):
+        self.Nfactor = data[0]
+        self.min_bound = data[1]
+        self.avg_bound = data[2]
+        self.max_bound = data[3]
+
+    def set_regen_execute_data(self, data: list):
+        self.cooldown = data[0]
+        self.peaceful_factor = data[1]
+        self.food_added = data[2]
+        self.o_mode = data[3]
+        
+
 
     def print(self):
          print(

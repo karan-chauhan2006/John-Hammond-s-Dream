@@ -2,7 +2,7 @@ import pandas as pd
 from ..Entities.state import State
 from datetime import datetime
 from pathlib import Path
-from ..config import DATA, CLOUMNS
+from .config import DATA, CLOUMNS
 class DataHandler: 
     data = list[list]
     columns = CLOUMNS

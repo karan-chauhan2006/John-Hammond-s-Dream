@@ -2,7 +2,7 @@ from ..Entities.animal import Animal
 from ..Entities.position import Position
 from ..Entities.world import World
 from ..Entities.intent import Intent
-from ..config import MOVE
+from .config import MOVE
 class ResolveMovementUseCase:
 
     def resolve_movement(self, animal: Animal, target: Position): 

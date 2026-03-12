@@ -5,7 +5,7 @@ class VizConfig:
     cell_size: int = 20
     grid_lines: bool = True
     fps: int = 5
-    autoplay_steps_per_sec: int = 1  # how many turns/sec when autoplay is on
+    autoplay_steps_per_sec: int = 25  # how many turns/sec when autoplay is on
     show_grid_every_n: int = 1        # draw every Nth turn if sim is heavy
 
 def clamp01(x: float) -> float:

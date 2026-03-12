@@ -3,7 +3,8 @@ from ..Entities.intent import Intent
 from ..Entities.animal import Animal
 from ..Entities.position import Position
 from ..Entities.world import World
-from ..config import ATTACK, REPRODUCE, MOVE
+from .config import ATTACK, REPRODUCE, MOVE
+from .. import config
 class DecideIntentUseCase:
     randomizer: random.Random
 
@@ -29,11 +30,22 @@ class DecideIntentUseCase:
             if loc!= pos and world.has_animal(loc):
                 if world.get_animal(pos).get_birthed() and loc == world.get_animal(pos).get_birth_pos():
                     continue
-                elif self.check_genv1(world, loc, animal):
+                elif self.check_gen(world, loc, animal):
                     continue
                 else:
                     return True
         return False
+    
+    def check_gen(self, world: World, loc: Position, animal: Animal) -> bool:
+        match(config.VERSION):
+            case config.V1:
+                return self.check_genv1(world, loc, animal)
+            case config.V2:
+                return self.check_genv2(world, loc, animal)
+            case config.V3:
+                return self.check_genv3(world, loc, animal)
+            case config.V4:
+                return self.check_genv4(world, loc, animal)
     
     def check_genv1(self, world: World, pos: Position, animal: Animal) -> bool:
         #same lineage gen +- 1
@@ -50,13 +62,16 @@ class DecideIntentUseCase:
             return False
         return True
 
-    def check_genv3():
+    def check_genv3(self, world: World, pos: Position, animal: Animal):
         #none 
-        pass
+        return False
 
-    def check_genv4():
+    def check_genv4(self, world: World, pos: Position, animal: Animal):
         #gen+-1
-        pass
+        posGen = [animal.get_gen()-1, animal.get_gen(), animal.get_gen()+1]
+        if not posGen.__contains__(world.get_animal(pos).get_gen()):
+            return False
+        return True
 
     def check_genv5():
         #common uniter

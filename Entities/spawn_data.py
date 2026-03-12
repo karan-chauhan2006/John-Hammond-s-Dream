@@ -1,7 +1,7 @@
 from typing import Optional
 from ..config import MUTATION_CONSTANT, STABILITY_FACTOR, MAXPRL
 from ..config import MINPRL, TAU, REPRODUCTION_CONSTANT, OSCILLATION_PERCENT
-from ..config import LIFE_DIVIDER, SEED, MUTATION_CHOICE, W,H
+from ..config import LIFE_DIVIDER, SEED, MUTATION_CHOICE, W,H, VERSION
 class SpawnData:
     animal_units : int
     food_units: int
@@ -10,11 +10,12 @@ class SpawnData:
     energy_range: list[float]
     vision_range: list[float]
     max_turns: int = -1
+    version: str
 
     def __init__(self, animal_units: int, food_units: int, 
                  life_range: list[float], hit_range: list[float],
                  energy_range: list[float], vision_range: list[float],
-                 max_turns: Optional[int]=-1):
+                max_turns: int):
         self.animal_units = animal_units
         self.food_units = food_units
         self.life_range = []
@@ -49,7 +50,8 @@ class SpawnData:
                 ["Reproduction constant", REPRODUCTION_CONSTANT, REPRODUCTION_CONSTANT],
                 ["Mutation constant", MUTATION_CONSTANT, MUTATION_CONSTANT],
                 ["Mutation Choice", MUTATION_CHOICE[0], MUTATION_CHOICE[-1]],
-                ["Life divider", LIFE_DIVIDER, LIFE_DIVIDER]]
+                ["Life divider", LIFE_DIVIDER, LIFE_DIVIDER],
+                ["Version", VERSION, VERSION]]
     
     def get_mutate_list(self):
         #HLTV

@@ -140,7 +140,7 @@ class Runner:
     def run(self, world: World, resolver, max_turns=1000, ):
         dt = 0.0
         self.turn = 0
-        self.autoplay = False
+        self.autoplay = True
         self._accum = 0.0
         self.data_handler.save_state(world.get_state())
 
