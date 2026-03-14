@@ -61,12 +61,16 @@ class DataPlotter:
      def cooldown_plot(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
          turn = turn_data["Turn"]
          e_estimator = turn_data["cooldown"]
+         limit = turn_data["limit"]
          fig.add_trace(go.Scatter(x = turn, y = e_estimator, mode = "lines", name = f"cooldown"), row = 4, col = 2)
+         fig.add_trace(go.Scatter(x = turn, y = limit, mode = "lines", name = f"limit"), row = 4, col = 2)
      
      def food_add_plot(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
          turn = turn_data["Turn"]
          e_estimator = turn_data["food added"]
-         fig.add_trace(go.Scatter(x = turn, y = e_estimator, mode = "lines", name = f"food added"), row = 1, col = 2)
+         fig.add_trace(go.Scatter(x = turn, y = e_estimator, 
+                                  mode = "lines", name = f"food added", 
+                                  line=dict(color = "pink")), row = 1, col = 2)
          
           
          

@@ -3,8 +3,8 @@ from ..Entities.intent import Intent
 from ..Entities.animal import Animal
 from ..Entities.position import Position
 from ..Entities.world import World
-from .config import ATTACK, REPRODUCE, MOVE
-from .. import config
+from ..config import VERSION
+from . import config
 class DecideIntentUseCase:
     randomizer: random.Random
 
@@ -17,11 +17,11 @@ class DecideIntentUseCase:
         for key in list(animals.keys()):
             animal = world.get_animal(key)
             if self.check_attack(world, key, animal):
-               animal.set_intent(Intent(ATTACK, key))
+               animal.set_intent(Intent(config.ATTACK, key))
             elif self.check_reproduce(world, key):
-                animal.set_intent(Intent(REPRODUCE, self.choose_birth(world, key)))
+                animal.set_intent(Intent(config.REPRODUCE, self.choose_birth(world, key)))
             else: 
-                animal.set_intent( Intent(MOVE, self.choose_direction(world, key)))
+                animal.set_intent( Intent(config.MOVE, self.choose_direction(world, key)))
             animal.set_birthed(False)
     
     def check_attack(self ,world: World, pos: Position, animal: Animal) -> bool:
@@ -37,7 +37,7 @@ class DecideIntentUseCase:
         return False
     
     def check_gen(self, world: World, loc: Position, animal: Animal) -> bool:
-        match(config.VERSION):
+        match(VERSION):
             case config.V1:
                 return self.check_genv1(world, loc, animal)
             case config.V2:

@@ -55,7 +55,7 @@ class FoodRegenUseCase:
 
     def set_metric_data(self, world: World, Nfactor: float):
         state = world.get_state()
-        state.set_regen_metric_data([Nfactor, self.min_bound, self.avg_bound, self.max_bound])
+        state.set_regen_metric_data([Nfactor, self.min_bound, self.avg_bound, self.max_bound, self.limit])
 
     
     def execute(self, world: World):
@@ -87,10 +87,10 @@ class FoodRegenUseCase:
         self.set_execute_data(world)
 
     def update_cooldown(self, world: World, nfood: float):
-        if world.get_state().totalCombat < self.min_bound:
+        if world.get_state().totalCombat <= self.min_bound:
             self.add_food(math.ceil(nfood), world)
             self.cooldown += 3
-        elif (world.get_state().totalCombat >= self.min_bound) and (world.get_state().totalCombat < self.avg_bound):
+        elif (world.get_state().totalCombat > self.min_bound) and (world.get_state().totalCombat < self.avg_bound):
             self.add_food(math.ceil(0.5*nfood), world)
             self.cooldown += 1
         elif (world.get_state().totalCombat >= self.avg_bound) and (world.get_state().totalCombat < self.max_bound):
@@ -124,7 +124,7 @@ class FoodRegenUseCase:
             self.counter = -1
         self.counter += 1
         self.set_amplitude()
-        return abs(math.ceil(OSCILLATION_PERCENT*self.r * self.a*math.sin(math.pi *(self.counter)/(2*TAU))+self.f))
+        return max(0,math.ceil(OSCILLATION_PERCENT*self.r * self.a*math.sin(math.pi *(self.counter)/(2*TAU))+self.f))
         
     def set_amplitude(self):
         if self.counter != 0 and self.counter % TAU == 0:
