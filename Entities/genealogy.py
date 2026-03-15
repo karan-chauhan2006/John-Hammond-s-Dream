@@ -23,3 +23,18 @@ class Genealogy:
         data = self.dead_genes
         self.dead_genes = {}
         return data
+
+    def lookup(self, id: int) -> int|None:
+        try: 
+            parent_id = self.live_genes[id].P_Id
+            if parent_id == 0:
+                return id
+            else:
+                ans = self.lookup(parent_id)
+                if ans is None:
+                    return id
+                else:
+                    return ans
+        except KeyError:
+            return None 
+            

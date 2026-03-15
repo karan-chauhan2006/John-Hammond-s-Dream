@@ -25,11 +25,11 @@ VISION_RANGE: list[int] = [6,14]
 VERSION = "V1"
 # *************************
 # possible values of version are: 
-# V1, V2, V3, V4
+# V1, V2, V3, V4, V5
 #check doc for details
 
 # ***** FOOD REGEN *****
-STABILITY_FACTOR: float = 0.15
+STABILITY_FACTOR: float = 0.5
 MAXPRL: float = 0.09
 MINPRL: float = 0.01
 TAU: int = 100

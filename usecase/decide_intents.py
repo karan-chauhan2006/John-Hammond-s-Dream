@@ -3,6 +3,7 @@ from ..Entities.intent import Intent
 from ..Entities.animal import Animal
 from ..Entities.position import Position
 from ..Entities.world import World
+from ..Entities.genealogy import Genealogy
 from ..config import VERSION
 from . import config
 class DecideIntentUseCase:
@@ -12,11 +13,11 @@ class DecideIntentUseCase:
         self.randomizer = randomizer
         
     
-    def execute(self, world: World):
+    def execute(self, world: World, genealogy: Genealogy):
         animals = world.get_animal_list()
         for key in list(animals.keys()):
             animal = world.get_animal(key)
-            if self.check_attack(world, key, animal):
+            if self.check_attack(world, key, animal, genealogy):
                animal.set_intent(Intent(config.ATTACK, key))
             elif self.check_reproduce(world, key):
                 animal.set_intent(Intent(config.REPRODUCE, self.choose_birth(world, key)))
@@ -24,19 +25,19 @@ class DecideIntentUseCase:
                 animal.set_intent( Intent(config.MOVE, self.choose_direction(world, key)))
             animal.set_birthed(False)
     
-    def check_attack(self ,world: World, pos: Position, animal: Animal) -> bool:
+    def check_attack(self ,world: World, pos: Position, animal: Animal, genealogy: Genealogy) -> bool:
         neighbours = world.neighbours(pos)
         for loc in neighbours:
             if loc!= pos and world.has_animal(loc):
                 if world.get_animal(pos).get_birthed() and loc == world.get_animal(pos).get_birth_pos():
                     continue
-                elif self.check_gen(world, loc, animal):
+                elif self.check_gen(world, loc, animal, genealogy):
                     continue
                 else:
                     return True
         return False
     
-    def check_gen(self, world: World, loc: Position, animal: Animal) -> bool:
+    def check_gen(self, world: World, loc: Position, animal: Animal, genealogy: Genealogy) -> bool:
         match(VERSION):
             case config.V1:
                 return self.check_genv1(world, loc, animal)
@@ -46,6 +47,8 @@ class DecideIntentUseCase:
                 return self.check_genv3(world, loc, animal)
             case config.V4:
                 return self.check_genv4(world, loc, animal)
+            case config.V5:
+                return self.check_genv5(world,loc,animal,genealogy)
     
     def check_genv1(self, world: World, pos: Position, animal: Animal) -> bool:
         #same lineage gen +- 1
@@ -73,9 +76,12 @@ class DecideIntentUseCase:
             return False
         return True
 
-    def check_genv5():
+    def check_genv5(self, world: World,pos: Position,animal: Animal,genealogy: Genealogy):
+        attacker_lookup = genealogy.lookup(animal.Id)
+        defender_lookup = genealogy.lookup(world.get_animal(pos).Id)
+        return not (attacker_lookup == defender_lookup)
         #common uniter
-        pass
+        
 
     
     def choose_direction(self, world: World, pos: Position) -> Position:
