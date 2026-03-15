@@ -10,7 +10,7 @@ from ..usecase.reproduce import ReproduceUseCase
 from .state_updater import StateUpdater
 from ..usecase.food_regen import FoodRegenUseCase
 import random
-class Turn_Resolver: 
+class TurnResolver: 
     decide_intent: DecideIntentUseCase
     food_decay: FoodDecayUseCase
     resolve_movement: ResolveMovementUseCase

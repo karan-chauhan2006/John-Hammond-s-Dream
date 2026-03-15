@@ -4,15 +4,16 @@ from ..graphics.vizconfig import VizConfig, clamp01, lerp, rgb
 from ..Entities.world import World
 from ..Entities.food import Food
 from ..Entities.animal import Animal
-from ..data_processors.data_handler import DataHandler
+from ..data_processors.new_data_handler import DataHandler
+from ..processors.turn_resolver import TurnResolver
 class Runner:
     data_handler: DataHandler
-    def __init__(self, W: int, H: int, cfg: VizConfig):
+    def __init__(self, W: int, H: int, cfg: VizConfig, data_handler: DataHandler):
         pygame.init()
         self.W, self.H = W, H
         self.cfg = cfg
         
-        self.data_handler = DataHandler()
+        self.data_handler = data_handler
 
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.screen_width, self.screen_height = self.screen.get_size()
@@ -137,12 +138,12 @@ class Runner:
 
         pygame.display.flip()
 
-    def run(self, world: World, resolver, max_turns=1000, ):
+    def run(self, world: World, resolver: TurnResolver, max_turns=1000, ):
         dt = 0.0
         self.turn = 0
         self.autoplay = True
         self._accum = 0.0
-        self.data_handler.save_state(world.get_state())
+        self.data_handler.record_turn_data(world.get_state())
 
         while self.turn <= max_turns:
             self.clock.tick(self.cfg.fps)
@@ -165,19 +166,18 @@ class Runner:
                     self._accum -= step_interval
                     resolver.step(world)  # <- your turn advancement
                     self.turn += 1
-                    self.data_handler.save_state(world.get_state())
+                    self.data_handler.record_turn_data(world.get_state())
                     
 
             # Manual single-step
             if step_once:
                 resolver.step(world)
                 self.turn += 1
-                self.data_handler.save_state(world.get_state())
+                self.data_handler.record_turn_data(world.get_state())
 
             # If you have combat damage stored, pass it; else None
             combat_damage = world.get_state().totalCombat
             self.draw(world, combat_damage=combat_damage)
-        return self.data_handler
 
     
             

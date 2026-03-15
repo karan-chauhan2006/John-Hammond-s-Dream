@@ -1,28 +1,36 @@
 from .Entities.world import World
 from .Entities.spawn_data import SpawnData
-from .processors.turn_resolver import Turn_Resolver
+from .processors.turn_resolver import TurnResolver
 from .processors.spawner import Spawner
 from .processors.runner import Runner
 from .graphics.vizconfig import VizConfig
 from .data_processors.data_plotter import DataPlotter
 import random
-from .config import W, H, TURNS, SEED, ANIMAL_UNITS, FOOD_UNITS
+from .config import W, H, TURNS, SEED, ANIMAL_UNITS, FOOD_UNITS, TAU
 from .config import LIFE_RANGE, HIT_RANGE, ENERGY_RANGE, VISION_RANGE
+from datetime import datetime
+from .data_processors.data_handler import DataHandler
 def main():
+    now = datetime.now()
+    time = now.strftime("%Y_%m_%d_%H_%M_%S")
+    name = f"{time}_{SEED}"
     randomizer = random.Random(SEED)
+    handler = DataHandler(name)
+    handler.start()
     # Seed makes runs reproducible; change/remove if you want true randomness.
     world = World(W, H, randomizer)
     spawn_data = SpawnData(animal_units=ANIMAL_UNITS, food_units=FOOD_UNITS, 
                       life_range=LIFE_RANGE, hit_range=HIT_RANGE,
                        energy_range= ENERGY_RANGE, vision_range=VISION_RANGE,
                         max_turns=TURNS)
-    resolver = Turn_Resolver(spawn_data.get_mutate_list(), spawn_data.get_eng_list(), randomizer)
+    handler.record_spawn_data(spawn_data.get_data())
+    resolver = TurnResolver(spawn_data.get_mutate_list(), spawn_data.get_eng_list(), randomizer)
     spawner = Spawner(spawn_data, randomizer)
     world = spawner.fill(world)
-    viz = Runner(W, H, VizConfig(cell_size=18, fps=30, autoplay_steps_per_sec=1))
-    handler = viz.run(world, resolver, max_turns=TURNS)
-    path = handler.save_data(spawn_data.get_data())
-    DataPlotter(path).plot()
+    viz = Runner(W, H, VizConfig(cell_size=18, fps=30, autoplay_steps_per_sec=1), handler)
+    viz.run(world, resolver, max_turns=TURNS)
+    handler.close()
+    DataPlotter(name, TAU).plot()
     
     # for t in range( turns + 1):
     #     if t!=0:
