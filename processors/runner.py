@@ -4,17 +4,20 @@ from ..graphics.vizconfig import VizConfig, clamp01, lerp, rgb
 from ..Entities.world import World
 from ..Entities.food import Food
 from ..Entities.animal import Animal
-from ..data_processors.new_data_handler import DataHandler
+from ..data_processors.data_handler import DataHandler
 from ..processors.turn_resolver import TurnResolver
+from ..Entities.genealogy import Genealogy
+from ..usecase.flush import FlushUseCase
 class Runner:
     data_handler: DataHandler
+    flush: FlushUseCase
     def __init__(self, W: int, H: int, cfg: VizConfig, data_handler: DataHandler):
         pygame.init()
         self.W, self.H = W, H
         self.cfg = cfg
         
         self.data_handler = data_handler
-
+        self.flush = FlushUseCase()
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.screen_width, self.screen_height = self.screen.get_size()
 
@@ -138,7 +141,7 @@ class Runner:
 
         pygame.display.flip()
 
-    def run(self, world: World, resolver: TurnResolver, max_turns=1000, ):
+    def run(self, world: World, genealogy: Genealogy, resolver: TurnResolver, max_turns=1000, ):
         dt = 0.0
         self.turn = 0
         self.autoplay = True
@@ -164,20 +167,25 @@ class Runner:
                 step_interval = 1.0 / max(1, self.steps_per_sec)
                 while self._accum >= step_interval:
                     self._accum -= step_interval
-                    resolver.step(world)  # <- your turn advancement
+                    resolver.step(world, genealogy)  # <- your turn advancement
                     self.turn += 1
                     self.data_handler.record_turn_data(world.get_state())
+                    self.data_handler.record_gen_data(genealogy.empty_genes())
                     
 
             # Manual single-step
             if step_once:
-                resolver.step(world)
+                resolver.step(world, genealogy)
                 self.turn += 1
                 self.data_handler.record_turn_data(world.get_state())
+                self.data_handler.record_gen_data(genealogy.empty_genes())
 
             # If you have combat damage stored, pass it; else None
             combat_damage = world.get_state().totalCombat
             self.draw(world, combat_damage=combat_damage)
+        
+        self.flush.execute(world,genealogy)
+        self.data_handler.record_gen_data(genealogy.empty_genes())
 
     
             

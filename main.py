@@ -10,6 +10,7 @@ from .config import W, H, TURNS, SEED, ANIMAL_UNITS, FOOD_UNITS, TAU
 from .config import LIFE_RANGE, HIT_RANGE, ENERGY_RANGE, VISION_RANGE
 from datetime import datetime
 from .data_processors.data_handler import DataHandler
+from .Entities.genealogy import Genealogy
 def main():
     now = datetime.now()
     time = now.strftime("%Y_%m_%d_%H_%M_%S")
@@ -19,6 +20,7 @@ def main():
     handler.start()
     # Seed makes runs reproducible; change/remove if you want true randomness.
     world = World(W, H, randomizer)
+    genealogy = Genealogy()
     spawn_data = SpawnData(animal_units=ANIMAL_UNITS, food_units=FOOD_UNITS, 
                       life_range=LIFE_RANGE, hit_range=HIT_RANGE,
                        energy_range= ENERGY_RANGE, vision_range=VISION_RANGE,
@@ -26,9 +28,9 @@ def main():
     handler.record_spawn_data(spawn_data.get_data())
     resolver = TurnResolver(spawn_data.get_mutate_list(), spawn_data.get_eng_list(), randomizer)
     spawner = Spawner(spawn_data, randomizer)
-    world = spawner.fill(world)
+    world, genealogy = spawner.fill(world, genealogy)
     viz = Runner(W, H, VizConfig(cell_size=18, fps=30, autoplay_steps_per_sec=1), handler)
-    viz.run(world, resolver, max_turns=TURNS)
+    viz.run(world, genealogy, resolver, max_turns=TURNS)
     handler.close()
     DataPlotter(name, TAU).plot()
     

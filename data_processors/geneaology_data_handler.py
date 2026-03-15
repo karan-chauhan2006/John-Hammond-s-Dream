@@ -1,8 +1,8 @@
 import csv
 from io import TextIOWrapper
-from .config import DATA, TURN_DATA_CLOUMNS
 from pathlib import Path
-class TurnDataHandler:
+from .config import GEN_DATA_COLUMNS
+class GenealogyDataHandler: 
     f: TextIOWrapper
     writer: csv.writer
 
@@ -10,13 +10,12 @@ class TurnDataHandler:
         pass
 
     def start_record(self, path: Path):
-        self.f = open(path / "turn_data.csv", "w", newline= "")
+        self.f = open(path / "genealogy_data.csv", "w", newline= "")
         self.writer = csv.writer(self.f)
-        self.writer.writerow(TURN_DATA_CLOUMNS)
+        self.writer.writerow(GEN_DATA_COLUMNS)
 
     def record_data(self, data: list):
         self.writer.writerow(data)
 
     def end_record(self):
         self.f.close()
-    
