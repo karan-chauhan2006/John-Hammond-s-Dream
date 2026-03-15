@@ -161,9 +161,9 @@ class DataPlotter:
      def t_food_regen_plot(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
          turn = turn_data["Turn"]
          totalcombat = turn_data["totalCombat"] 
-         min_bound = turn_data["min_bound"]
-         avg_bound = turn_data["avg_bound"]
-         max_bound = turn_data["max_bound"]
+         min_bound = turn_data["min_bound"].shift(1)
+         avg_bound = turn_data["avg_bound"].shift(1)
+         max_bound = turn_data["max_bound"].shift(1)
          fig.add_trace(go.Scatter(x = turn, y = min_bound, mode = "lines", name = "min_bound"), row = 4, col = 1)
          fig.add_trace(go.Scatter(x = turn, y = avg_bound, mode = "lines", name = "avg_bound"), row = 4, col = 1)
          fig.add_trace(go.Scatter(x = turn, y = max_bound, mode = "lines", name = "max_bound"), row = 4, col = 1)
