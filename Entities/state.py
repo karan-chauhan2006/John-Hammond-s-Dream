@@ -43,6 +43,7 @@ class State:
     peaceful_factor: float = 0.0
     food_added: int = 0
     o_mode: bool = False
+    limit: int = 0
     # indicators
     E_indicator: float = None
     EDM: float = None# energy death measure
@@ -56,8 +57,8 @@ class State:
                 self.maxFE, self.maxGen, self.minAE, self.minET, self.minH,
                 self.minV, self.minL, self.minFE, self.minGen, self.totalAE,
                 self.totalFE, self.totalE, self.totalCombat, self.Nfactor, self.min_bound,
-                self.avg_bound, self.max_bound, self.cooldown, self.mode, self.peaceful_factor, self.food_added,
-                self.E_indicator, self.EDM, self.RDM]
+                self.avg_bound, self.max_bound, self.cooldown, self.limit, self.mode, self.peaceful_factor, 
+                self.food_added,self.E_indicator, self.EDM, self.RDM]
     
 
     def set_total_combat(self, combat: int):
@@ -68,6 +69,7 @@ class State:
         self.min_bound = data[1]
         self.avg_bound = data[2]
         self.max_bound = data[3]
+        self.limit = data[4]
 
     def set_regen_execute_data(self, data: list):
         self.cooldown = data[0]

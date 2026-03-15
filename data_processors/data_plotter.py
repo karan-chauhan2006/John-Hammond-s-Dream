@@ -2,18 +2,17 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 from .config import DATA, PLOTS
-from ..config import STABILITY_FACTOR
 import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 class DataPlotter: 
      data_path: Path
      result_path: Path
-     def __init__(self, path: Path):
-        self.data_path = path
-        name = path.name
+     def __init__(self, name: str, tau: int):
+        self.data_path = DATA / name
+        name = name
         self.result_path = DATA / name
-        self.result_path.mkdir(parents= True, exist_ok= True)
+        self.tau = tau
 
      def plot(self):
         turn_data = pd.read_csv(self.data_path / "turn_data.csv")
@@ -61,12 +60,17 @@ class DataPlotter:
      def cooldown_plot(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
          turn = turn_data["Turn"]
          e_estimator = turn_data["cooldown"]
+         limit = turn_data["limit"]
          fig.add_trace(go.Scatter(x = turn, y = e_estimator, mode = "lines", name = f"cooldown"), row = 4, col = 2)
+         fig.add_trace(go.Scatter(x = turn, y = limit, mode = "lines", name = f"limit"), row = 4, col = 2)
+         fig.add_trace(go.Scatter(x = [turn.iloc[0], turn.iloc[-1]], y = [2*self.tau, 2*self.tau], mode = "lines", name = f"full cycle"), row = 4, col = 2)
      
      def food_add_plot(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
          turn = turn_data["Turn"]
          e_estimator = turn_data["food added"]
-         fig.add_trace(go.Scatter(x = turn, y = e_estimator, mode = "lines", name = f"food added"), row = 1, col = 2)
+         fig.add_trace(go.Scatter(x = turn, y = e_estimator, 
+                                  mode = "lines", name = f"food added", 
+                                  line=dict(color = "pink")), row = 1, col = 2)
          
           
          
@@ -157,9 +161,9 @@ class DataPlotter:
      def t_food_regen_plot(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
          turn = turn_data["Turn"]
          totalcombat = turn_data["totalCombat"] 
-         min_bound = turn_data["min_bound"]
-         avg_bound = turn_data["avg_bound"]
-         max_bound = turn_data["max_bound"]
+         min_bound = turn_data["min_bound"].shift(1)
+         avg_bound = turn_data["avg_bound"].shift(1)
+         max_bound = turn_data["max_bound"].shift(1)
          fig.add_trace(go.Scatter(x = turn, y = min_bound, mode = "lines", name = "min_bound"), row = 4, col = 1)
          fig.add_trace(go.Scatter(x = turn, y = avg_bound, mode = "lines", name = "avg_bound"), row = 4, col = 1)
          fig.add_trace(go.Scatter(x = turn, y = max_bound, mode = "lines", name = "max_bound"), row = 4, col = 1)

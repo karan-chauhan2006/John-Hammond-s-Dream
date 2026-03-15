@@ -1,38 +1,30 @@
-import pandas as pd
-from ..Entities.state import State
-from datetime import datetime
+from .spawn_data_handler import SpawnDataHandler
+from .turn_data_handler import TurnDataHandler
+from .config import DATA
 from pathlib import Path
-from .config import DATA, CLOUMNS
-class DataHandler: 
-    data = list[list]
-    columns = CLOUMNS
-    
-    def __init__(self):
-        self.data = []
+from ..Entities.spawn_data import SpawnData
+from ..Entities.state import State
+class DataHandler:
+    file_path: Path 
+    spawn_data_handler: SpawnDataHandler
+    turn_data_handler: TurnDataHandler
 
-    def save_state(self, state: State):
-        self.data.append(state.get_arr())
+    def __init__(self, name: str):
+        self.file_path = DATA / name
+        self.spawn_data_handler = SpawnDataHandler()
+        self.turn_data_handler = TurnDataHandler()
+
+    def start(self):
+        self.file_path.mkdir()
+        self.turn_data_handler.start_record(self.file_path)
+
+    def record_spawn_data(self, spawn_data: SpawnData):
+        self.spawn_data_handler.save_spawn_data(spawn_data, self.file_path)
+
+    def record_turn_data(self, state: State):
+        data = state.get_arr()
+        self.turn_data_handler.record_data(data)
+
+    def close(self):
+        self.turn_data_handler.end_record()
         
-    def save_data(self, spawn_data: list) -> Path:
-        path = self.create_dir()
-        self.save_spawn_data(path, spawn_data)
-        self.save_turn_data(path)
-        self.save_gen_data(path)
-        return path
-    
-    def create_dir(self) -> Path:
-        now = datetime.now()
-        name = now.strftime("%Y_%m_%d_%H_%M_%S")
-        (DATA / name).mkdir()
-        return DATA / name
-    
-    def save_spawn_data(self, path: Path, spawn_data: list):
-        df = pd.DataFrame(spawn_data, columns=["Trait", "Min Val", "Max Val"])
-        df.to_csv(path / "spawn_data.csv")
-
-    def save_turn_data(self, path: Path):
-        df = pd.DataFrame(self.data, columns= self.columns)
-        df.to_csv(path / "turn_data.csv", index=False)
-
-    def save_gen_data(self, path: Path):
-        pass
