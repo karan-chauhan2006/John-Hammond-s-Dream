@@ -38,7 +38,7 @@ class TurnResolver:
         self.food_regen = FoodRegenUseCase(eng_range, randomizer)
 
     def step(self, world: World, genealogy: Genealogy) -> None:
-        self.decide_intent.execute(world)
+        self.decide_intent.execute(world, genealogy)
         self.food_decay.execute(world)
         self.attack.execute(world)
         self.reproduce.execute(world, genealogy)
