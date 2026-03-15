@@ -1,4 +1,5 @@
 from ..Entities.world import World
+from ..Entities.genealogy import Genealogy
 from ..usecase.food_decay import FoodDecayUseCase
 from ..usecase.decide_intents import DecideIntentUseCase
 from ..usecase.resolve_movement import ResolveMovementUseCase
@@ -36,15 +37,15 @@ class TurnResolver:
         self.stateUpdater = StateUpdater()
         self.food_regen = FoodRegenUseCase(eng_range, randomizer)
 
-    def step(self, world: World) -> None:
+    def step(self, world: World, genealogy: Genealogy) -> None:
         self.decide_intent.execute(world)
         self.food_decay.execute(world)
         self.attack.execute(world)
-        self.reproduce.execute(world)
+        self.reproduce.execute(world, genealogy)
         self.resolve_movement.execute(world)
         self.eat.execute(world)
         self.age.execute(world)
-        self.death.execute(world)
+        self.death.execute(world, genealogy)
         self.food_regen.execute(world)
         self.stateUpdater.execute(world)
         self.food_regen.caculate(world)

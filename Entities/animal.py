@@ -4,28 +4,35 @@ from ..config import REPRODUCTION_CONSTANT, LIFE_DIVIDER
 
 import math
 class Animal:
+    #traits
     hit: float
     max_life: float
-    life: float
-    energy: float
-    threshold: float
     min_threshold: float
     vision: float
     gen: int = 0
+    lineage: int = None
+    Id: int 
+
+    #mutables
     intent: Intent
     cooldown_attack: int = 0
     cooldown_aging: int = 0
+    pos: Position
+    energy: float
+    threshold: float
+
+    #constants & intenral logic
     birthed: bool = False
-    birth_pos: Position = Position(None, None)
-    lineage: int = None
+    child_birth_pos: Position = Position(None, None)
     life_divider: int
     divide_counter: int = 0
     threshold_buffer: int = 0
-    pos: Position
     ate: bool = False
+    life: float
+
     
     def __init__(self, hit: int, max_life: int, threshold: float,
-                  vision: int, gen: int, pos: Position, lineage: int):
+                  vision: int, gen: int, pos: Position, lineage: int, id: int):
         self.hit = hit
         self.max_life = max_life
         self.life = max_life
@@ -40,6 +47,7 @@ class Animal:
         self.life_divider = LIFE_DIVIDER
         self.threshold_buffer = math.ceil(threshold/(self.life_divider))
         self.ate = False
+        self.Id = id
         pass 
 
 
@@ -83,7 +91,7 @@ class Animal:
         return self.birthed
     
     def get_birth_pos(self) -> Position:
-        return self.birth_pos
+        return self.child_birth_pos
     
 
     def set_energy(self, energy: float):
@@ -123,7 +131,7 @@ class Animal:
         self.birthed = birthed
 
     def set_birth_pos(self, pos: Position):
-        self.birth_pos = pos
+        self.child_birth_pos = pos
 
     def set_lineage(self, lin: int):
         self.lineage = lin
