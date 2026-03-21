@@ -6,6 +6,7 @@ from ..Entities.world import World
 from ..Entities.genealogy import Genealogy
 from ..config import VERSION
 from . import config
+import math
 class DecideIntentUseCase:
     randomizer: random.Random
 
@@ -14,22 +15,24 @@ class DecideIntentUseCase:
         
     
     def execute(self, world: World, genealogy: Genealogy):
+        #main executer and sets intent
         animals = world.get_animal_list()
-        for key in list(animals.keys()):
-            animal = world.get_animal(key)
-            if self.check_attack(world, key, animal, genealogy):
+        for key,animal in list(animals.items()):
+            neighbours = world.neighbours(key)
+            if self.check_attack(world, key, animal, genealogy, neighbours):
                animal.set_intent(Intent(config.ATTACK, key))
-            elif self.check_reproduce(world, key):
-                animal.set_intent(Intent(config.REPRODUCE, self.choose_birth(world, key)))
+            elif self.check_reproduce(world, key, neighbours):
+                animal.set_intent(Intent(config.REPRODUCE, self.choose_birth(world, key, neighbours)))
             else: 
                 animal.set_intent( Intent(config.MOVE, self.choose_direction(world, key)))
             animal.set_birthed(False)
     
-    def check_attack(self ,world: World, pos: Position, animal: Animal, genealogy: Genealogy) -> bool:
-        neighbours = world.neighbours(pos)
+    def check_attack(self ,world: World, pos: Position, animal: Animal, 
+                     genealogy: Genealogy, neighbours: list[Position]) -> bool:
+        # checks if the animal is under attack
         for loc in neighbours:
             if loc!= pos and world.has_animal(loc):
-                if world.get_animal(pos).get_birthed() and loc == world.get_animal(pos).get_birth_pos():
+                if animal.get_birthed() and loc == animal.get_birth_pos():
                     continue
                 elif self.check_gen(world, loc, animal, genealogy):
                     continue
@@ -38,6 +41,7 @@ class DecideIntentUseCase:
         return False
     
     def check_gen(self, world: World, loc: Position, animal: Animal, genealogy: Genealogy) -> bool:
+        # chooses which version of attack the run is working with and checks that
         match(VERSION):
             case config.V1:
                 return self.check_genv1(world, loc, animal)
@@ -85,6 +89,7 @@ class DecideIntentUseCase:
 
     
     def choose_direction(self, world: World, pos: Position) -> Position:
+        # chooses which direction to move in 
         loc = self.find_loc(world,pos)
         if loc == pos:
             return self.randomizer.choice(world.neighbours(pos))
@@ -103,7 +108,8 @@ class DecideIntentUseCase:
             for d in candid: 
                 if world.distance(d,loc) < min_dis:
                     final.append(d)
-            if world.get_animal(pos).get_birthed() and final.__contains__(world.get_animal(pos).get_birth_pos()):
+            animal = world.get_animal(pos)
+            if animal.get_birthed() and final.__contains__(animal.get_birth_pos()):
                 final.remove(world.get_animal(pos).get_birth_pos())
             if len(final) == 0:
                 return pos
@@ -114,28 +120,34 @@ class DecideIntentUseCase:
         
 
     def find_loc(self, world: World, pos: Position) -> Position:
+        # finds the direction of the closes food
         flag = False
         vision = world.get_animal(pos).get_vision()
         min_dis = world.W + world.H + 10
         min_pos = Position(0,0)
-        for loc in list(world.get_food_list().keys()):
-            if world.distance(pos,loc) <= vision:
-                if world.distance(pos,loc) < min_dis:
-                    min_pos = loc
-                    min_dis = world.distance(pos,loc)
-                    flag = True
+        for dx in range(-math.floor(vision), math.floor(vision)+1):
+            max_dy = math.floor(vision) - abs(dx)
+            for dy in range(-max_dy, max_dy + 1):
+                loc = Position(pos.x+dx, pos.y+dy)
+                if world.has_food(loc):
+                    if world.distance(pos,loc) < min_dis:
+                        min_pos = loc
+                        min_dis = world.distance(pos,loc)
+                        flag = True
+
         if flag:
             return min_pos
         else:
             return pos
         
-    def check_reproduce(self, world: World, pos: Position) -> bool: 
+    def check_reproduce(self, world: World, pos: Position, neighbours: list[Position]) -> bool: 
+        # checks if the animal can reproduce
         animal = world.get_animal(pos)
         flag = True
         if animal.get_energy() < animal.get_threshold():
             flag = False
         
-        neighbours = world.neighbours(pos)
+
         count = 4
         for n in neighbours:
             if not(world.is_empty(n)):
@@ -146,8 +158,8 @@ class DecideIntentUseCase:
 
         return flag
 
-    def choose_birth(self, world: World, pos: Position) -> Position:
-        neighbours = world.neighbours(pos)
+    def choose_birth(self, world: World, pos: Position, neighbours: list[Position]) -> Position:
+        # chooses teh location to reproduce
         empty = []
         for n in neighbours:
             if world.is_empty(n):
