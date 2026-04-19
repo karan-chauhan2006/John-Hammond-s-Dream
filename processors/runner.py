@@ -1,6 +1,7 @@
 import pygame
 import sys
 from ..graphics.vizconfig import VizConfig, clamp01, lerp, rgb
+from ..graphics.colours import Colours
 from ..Entities.world import World
 from ..Entities.food import Food
 from ..Entities.animal import Animal
@@ -8,10 +9,15 @@ from ..data_processors.data_handler import DataHandler
 from ..processors.turn_resolver import TurnResolver
 from ..Entities.genealogy import Genealogy
 from ..usecase.flush import FlushUseCase
+from .config import MODES, P_MODES
 class Runner:
     data_handler: DataHandler
     flush: FlushUseCase
-    def __init__(self, W: int, H: int, cfg: VizConfig, data_handler: DataHandler):
+    modes: list[str]
+    current_mode_num: int
+    colours: Colours
+
+    def __init__(self, W: int, H: int, cfg: VizConfig, data_handler: DataHandler, version: str):
         pygame.init()
         self.W, self.H = W, H
         self.cfg = cfg
@@ -32,6 +38,13 @@ class Runner:
         self.autoplay = False
         self.steps_per_sec = cfg.autoplay_steps_per_sec
         self._accum = 0.0  # time accumulator for stepping
+
+        if version == "V5":
+            self.modes = P_MODES
+        else:
+            self.modes = MODES
+        self.current_mode_num = 0
+        self.colours = Colours()
 
     def handle_events(self):
         step_once = False
@@ -60,6 +73,11 @@ class Runner:
 
                 if event.key == pygame.K_r:
                     restart = True
+                
+                if event.key == pygame.K_c:
+                    self.current_mode_num += 1
+                    if self.current_mode_num == len(self.modes):
+                        self.current_mode_num = 0
 
         return step_once, restart
 
@@ -67,53 +85,28 @@ class Runner:
         cw = self.cell_w
         ch = self.cell_h
         self.screen.fill((0, 0, 0))
+        self.draw_plants(world)
 
-        # --- Draw food first (so animals draw on top) ---
-        for key in list(world.get_food_list().keys()):
-            food: Food = world.get_food(key)
-            e = food.get_energy()
-            # map food energy -> green brightness
-            g = clamp01(0.2 + 0.03 * e)
-            color = rgb(0, 255 * g, 0)
-            rect = pygame.Rect(
-                    int(food.get_pos().x * cw),
-                    int(food.get_pos().y * ch),
-                    int(cw) + 1,
-                    int(ch) + 1
-                    )
-            pygame.draw.rect(self.screen, color, rect)
+        match(self.modes[self.current_mode_num]):
+            case "Energy":
+                self.energy_draw(world)
+            case "Threshold":
+                self.threshold_draw(world)
+            case "Hit": 
+                self.hit_draw(world)
+            case "Life":
+                self.life_draw(world)
+            case "Max Life":
+                self.max_life_draw(world)
+            case "Vision":
+                self.vision_draw(world)
+            case "Gen": 
+                self.gen_draw(world)
 
-        # --- Draw animals ---
-        for key in list(world.get_animal_list().keys()):
-            a: Animal = world.get_animal(key)
-            energy = getattr(a, "energy", 0)
-            life = getattr(a, "life", 1)
-            max_life = getattr(a, "max_life", 1)
-            cd = getattr(a, "cooldown_attack", 0)
 
-            # Choose what you want to visualize:
-            # 1) Energy view:
-            t = clamp01(0.10 + 0.02 * energy)
-            # 2) Life view (uncomment):
-            # t = clamp01(life / max(1, max_life))
+            
 
-            # Color ramp: dark red -> bright orange/yellow-ish
-            r = 255 * lerp(0.35, 1.0, t)
-            g = 255 * lerp(0.05, 0.65, t)
-            b = 0
-
-            # If on attack cooldown, tint blue (so you can "see" cooldown waves)
-            if cd > 0:
-                b = min(200, 60 * cd)
-
-            color = rgb(r, g, b)
-            rect = pygame.Rect(
-                    int(a.get_pos().x * cw),
-                    int(a.get_pos().y * ch),
-                    int(cw) + 1,
-                    int(ch) + 1
-                    )
-            pygame.draw.rect(self.screen, color, rect)
+        
 
         # --- Optional grid lines ---
         if self.cfg.grid_lines and self.cell_w >= 6 and self.cell_h >= 6:
@@ -130,6 +123,7 @@ class Runner:
         hud = f"Turn {self.turn:04d} | A={len(world.animals)} F={len(world.foods)} | "
         hud += "AUTO" if self.autoplay else "PAUSE"
         hud += f" | {self.steps_per_sec} tps"
+        hud += f" | Mode = {self.modes[self.current_mode_num]}"
         if combat_damage is not None:
             hud += f" | dmg={combat_damage}"
 
@@ -140,6 +134,166 @@ class Runner:
         self.screen.blit(surf2, (8, 8))
 
         pygame.display.flip()
+
+    def draw_plants(self, world: World):
+        cw = self.cell_w
+        ch = self.cell_h
+         # --- Draw food first (so animals draw on top) ---
+        for key in list(world.get_food_list().keys()):
+            food: Food = world.get_food(key)
+            e = food.get_energy()
+            # map food energy -> green brightness
+            g = clamp01(0.2 + 0.03 * e)
+            color = rgb(0, 255 * g, 0)
+            rect = pygame.Rect(
+                    int(food.get_pos().x * cw),
+                    int(food.get_pos().y * ch),
+                    int(cw) + 1,
+                    int(ch) + 1
+                    )
+            pygame.draw.rect(self.screen, color, rect)
+
+    def energy_draw(self, world: World):
+        cw = self.cell_w
+        ch = self.cell_h
+        max_eng = world.get_state().maxAE
+        min_eng = world.get_state().minAE
+        # --- Draw animals ---
+        for key in list(world.get_animal_list().keys()):
+            a: Animal = world.get_animal(key)
+
+            color = self.colours.yellow(a.energy, min_eng, max_eng)
+            rect = pygame.Rect(
+                    int(a.get_pos().x * cw),
+                    int(a.get_pos().y * ch),
+                    int(cw) + 1,
+                    int(ch) + 1
+                    )
+            pygame.draw.rect(self.screen, color, rect)
+
+       
+        
+    def threshold_draw(self, world: World):
+        cw = self.cell_w
+        ch = self.cell_h
+        max_threshold = world.get_state().maxET
+        min_threshold = world.get_state().minET
+        # --- Draw animals ---
+        for key in list(world.get_animal_list().keys()):
+            a: Animal = world.get_animal(key)
+
+            color = self.colours.orange(a.threshold, min_threshold, max_threshold)
+            rect = pygame.Rect(
+                    int(a.get_pos().x * cw),
+                    int(a.get_pos().y * ch),
+                    int(cw) + 1,
+                    int(ch) + 1
+                    )
+            pygame.draw.rect(self.screen, color, rect)
+
+        
+    
+    def hit_draw(self, world: World):
+        cw = self.cell_w
+        ch = self.cell_h
+        max_hit = world.get_state().maxH
+        min_hit = world.get_state().minH
+        # --- Draw animals ---
+        for key in list(world.get_animal_list().keys()):
+            a: Animal = world.get_animal(key)
+
+            color = self.colours.red(a.hit, min_hit, max_hit)
+            rect = pygame.Rect(
+                    int(a.get_pos().x * cw),
+                    int(a.get_pos().y * ch),
+                    int(cw) + 1,
+                    int(ch) + 1
+                    )
+            pygame.draw.rect(self.screen, color, rect)
+
+        
+        
+    def life_draw(self, world: World):
+        cw = self.cell_w
+        ch = self.cell_h
+        max_life = world.get_state().maxL
+        # --- Draw animals ---
+        for key in list(world.get_animal_list().keys()):
+            a: Animal = world.get_animal(key)
+
+            l = a.get_life()
+            b = int(l*255/max_life)
+            color = rgb(0, 0, b)
+        
+            rect = pygame.Rect(
+                    int(a.get_pos().x * cw),
+                    int(a.get_pos().y * ch),
+                    int(cw) + 1,
+                    int(ch) + 1
+                    )
+            pygame.draw.rect(self.screen, color, rect)
+
+    def max_life_draw(self, world: World):
+        cw = self.cell_w
+        ch = self.cell_h
+        max_life = world.get_state().maxL
+        min_life = world.get_state().minL
+        # --- Draw animals ---
+        for key in list(world.get_animal_list().keys()):
+            a: Animal = world.get_animal(key)
+
+            color = self.colours.purple(a.max_life, min_life, max_life)
+            rect = pygame.Rect(
+                    int(a.get_pos().x * cw),
+                    int(a.get_pos().y * ch),
+                    int(cw) + 1,
+                    int(ch) + 1
+                    )
+            pygame.draw.rect(self.screen, color, rect)
+
+       
+    def vision_draw(self, world: World):
+        cw = self.cell_w
+        ch = self.cell_h
+        max_vision = world.get_state().maxV
+        min_vision = world.get_state().minV
+        # --- Draw animals ---
+        for key in list(world.get_animal_list().keys()):
+            a: Animal = world.get_animal(key)
+
+            color = self.colours.cyan(a.vision, min_vision, max_vision)
+            rect = pygame.Rect(
+                    int(a.get_pos().x * cw),
+                    int(a.get_pos().y * ch),
+                    int(cw) + 1,
+                    int(ch) + 1
+                    )
+            pygame.draw.rect(self.screen, color, rect)
+
+        
+        
+
+    def gen_draw(self, world: World):
+        cw = self.cell_w
+        ch = self.cell_h
+        max_vision = world.get_state().maxGen
+        min_vision = world.get_state().minGen
+        # --- Draw animals ---
+        for key in list(world.get_animal_list().keys()):
+            a: Animal = world.get_animal(key)
+
+            color = self.colours.magenta(a.gen, min_vision, max_vision)
+            rect = pygame.Rect(
+                    int(a.get_pos().x * cw),
+                    int(a.get_pos().y * ch),
+                    int(cw) + 1,
+                    int(ch) + 1
+                    )
+            pygame.draw.rect(self.screen, color, rect)
+
+        
+        
+    
 
     def run(self, world: World, genealogy: Genealogy, resolver: TurnResolver, max_turns=1000, ):
         dt = 0.0
@@ -167,7 +321,7 @@ class Runner:
                 step_interval = 1.0 / max(1, self.steps_per_sec)
                 while self._accum >= step_interval:
                     self._accum -= step_interval
-                    resolver.step(world, genealogy)  # <- your turn advancement
+                    resolver.step(world, genealogy)
                     self.turn += 1
                     self.data_handler.record_turn_data(world.get_state())
                     self.data_handler.record_gen_data(genealogy.empty_genes())

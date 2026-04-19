@@ -11,6 +11,7 @@ from ..usecase.reproduce import ReproduceUseCase
 from .state_updater import StateUpdater
 from ..usecase.food_regen import FoodRegenUseCase
 import random
+import time
 class TurnResolver: 
     decide_intent: DecideIntentUseCase
     food_decay: FoodDecayUseCase
@@ -49,4 +50,3 @@ class TurnResolver:
         self.food_regen.execute(world)
         self.stateUpdater.execute(world)
         self.food_regen.caculate(world)
-        
