@@ -5,18 +5,18 @@ import math
 # ------------- FEEL FREE TO PLAY AROUND WITH ----------
 
 # ****** SPAWN DATA ******
-W: int = 25
-H: int = 25
-TURNS: int = 5000
+W: int = 100
+H: int = 100
+TURNS: int = 10000
 SEED: int = None
 # [20241114, 20241116, 20241216, 20250120, 20250214, 20250505, 
 # 20251007, 20251112, 20251114, 20251116, 20260120, 20260225]
-ANIMAL_UNITS: int = 125
-FOOD_UNITS: int = 375
-LIFE_RANGE: list[int] = [1,60]
+ANIMAL_UNITS: int = 20
+FOOD_UNITS: int = 1000
+LIFE_RANGE: list[int] = [1,100]
 HIT_RANGE: list[int] = [1,15]
 ENERGY_RANGE: list[int] = [1,150]
-VISION_RANGE: list[int] = [5,10]
+VISION_RANGE: list[int] = [10,15]
 # ************************
 # lists in this SPAWN DATA should be of length 2
 # with min value at pos 0 and max value at pos 1 
@@ -29,7 +29,7 @@ VERSION = "V1"
 #check doc for details
 
 # ***** FOOD REGEN *****
-STABILITY_FACTOR: float = 0.31
+STABILITY_FACTOR: float = 0.35
 MAXPRL: float = 0.09
 MINPRL: float = 0.01
 TAU: int = 100
