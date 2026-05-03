@@ -37,4 +37,11 @@ class Genealogy:
                     return ans
         except KeyError:
             return None 
+    
+    def is_alive(self, id: int) -> bool:
+        try: 
+            animal = self.live_genes[id]
+            return True
+        except KeyError:
+            return False
             

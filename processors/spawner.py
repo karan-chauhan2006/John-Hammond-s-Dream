@@ -7,6 +7,7 @@ from .state_updater import StateUpdater
 from ..Entities.spawn_data import SpawnData
 from ..Entities.genealogy import Genealogy
 from ..Entities.genealogy_data import GenealogyData
+from bidict import bidict
 
 class Spawner:
     spawn_data: SpawnData
@@ -35,7 +36,9 @@ class Spawner:
             max_life = self.randomizer.choice(self.spawn_data.life_range)
             threshold = self.randomizer.choice(self.spawn_data.energy_range)
             vision = self.randomizer.choice(self.spawn_data.vision_range)
-            animal = Animal(hit, max_life, threshold, vision, 0, pos, lineage= i+1, id= id)
+            knowledge = self.get_knowledge()
+            animal = Animal(hit, max_life, threshold, vision, 0, pos,
+                             lineage= i+1, id= id,knowledge= knowledge)
             animal.set_birthed(True)
             animal.set_birth_pos(pos)
             world.add_animal(pos,animal)
@@ -44,6 +47,19 @@ class Spawner:
                                  b_threshold= threshold, vision= vision)
             genealogy.add_genealogy(data)
         return world, genealogy
+    
+    def get_knowledge(self) -> dict:
+        knowledge = dict()
+        moves = ["E", "M", "B", "T", "F", "A"]
+        sum = 0
+        for obj in moves:
+            try:
+                value = self.randomizer.randint(1,100-sum)
+            except ValueError:
+                value = 0
+            knowledge[obj] = value
+            sum += value
+        return knowledge 
 
 
     def spawn_food(self, world: World):

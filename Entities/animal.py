@@ -1,6 +1,8 @@
 from .position import Position
 from .intent import Intent
+from .mood import Mood
 from ..config import REPRODUCTION_CONSTANT, LIFE_DIVIDER
+from bidict import bidict
 
 import math
 class Animal:
@@ -12,8 +14,12 @@ class Animal:
     gen: int = 0
     lineage: int = None
     Id: int 
+    
 
     #mutables
+    knowledge: dict
+    strategy: str
+    mood: Mood
     intent: Intent
     cooldown_attack: int = 0
     cooldown_aging: int = 0
@@ -32,7 +38,8 @@ class Animal:
 
     
     def __init__(self, hit: int, max_life: int, threshold: float,
-                  vision: int, gen: int, pos: Position, lineage: int, id: int):
+                  vision: int, gen: int, pos: Position, lineage: int, id: int,
+                  knowledge: bidict):
         self.hit = hit
         self.max_life = max_life
         self.life = max_life
@@ -42,6 +49,9 @@ class Animal:
         self.vision = vision
         self.gen = gen
         self.pos = pos
+        self.knowledge = knowledge
+        self.strategy = None
+        self.mood = None 
         self.intent = Intent(None, None)
         self.lineage = lineage
         self.life_divider = LIFE_DIVIDER

@@ -44,7 +44,8 @@ class ReproduceUseCase:
         vision = parent.get_vision() + self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[3]
         gen = parent.get_gen() + 1
         pos = parent.get_intent().get_target()
-        child = Animal(hit, max_life, threshold, vision, gen, pos, lineage= parent.get_lineage(), id= id)
+        child = Animal(hit, max_life, threshold, vision, gen, pos,
+                        lineage= parent.get_lineage(), id= id,knowledge= parent.knowledge)
         child.set_cooldown_attack(2)
         child.set_cooldown_aging(1)
         child.set_energy(parent.get_energy()/4)
