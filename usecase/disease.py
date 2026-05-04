@@ -29,13 +29,22 @@ class DiseaseUseCase:
         if virus.counter == 0:
             match (virus.trait):
                 case config.VISION:
-                    animal.vision = virus.trait_val
+                    if virus.effect < 0 and abs(virus.effect) > virus.trait_val:
+                        animal.vision += virus.trait_val
+                    else:
+                        animal.vision =max(0, animal.vision - virus.effect) 
                 case config.HIT:
-                    animal.hit = virus.trait_val
+                    if virus.effect < 0 and abs(virus.effect) > virus.trait_val:
+                        animal.hit += virus.trait_val
+                    else:
+                        animal.hit = max(0, animal.hit - virus.effect)
                 case config.LIFE:
                     pass
                 case config.THRESHOLD:
-                    animal.threshold = virus.trait_val
+                    if virus.effect < 0 and abs(virus.effect) > virus.trait_val:
+                        animal.threshold += virus.trait_val
+                    else:
+                        animal.threshold = max(0, animal.threshold - virus.effect)
             animal.virus.remove(virus)
         elif animal.energy > virus.cost:
             virus.phase = SYMBIOSIS

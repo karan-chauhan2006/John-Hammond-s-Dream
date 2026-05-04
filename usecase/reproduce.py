@@ -7,6 +7,7 @@ from ..Entities.genealogy import Genealogy
 from ..Entities.genealogy_data import GenealogyData
 from ..config import MUTATION_CHOICE
 from .config import REPRODUCE, TRAITS
+from . import config
 import math
 class ReproduceUseCase:
     mutate_list: list #HLTV
@@ -39,10 +40,14 @@ class ReproduceUseCase:
 
     def create_child(self, parent: Animal, genealogy: Genealogy) -> Animal:
         id = genealogy.max_id + 1
-        hit = parent.get_hit() + self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[0]
-        max_life = parent.get_max_life() + self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[1]
-        threshold = parent.get_threshold() + self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[2]
-        vision = parent.get_vision() + self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[3]
+        hit_choice = self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[0]
+        ml_choice = self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[1]
+        threshold_choice = self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[2]
+        vision_choice = self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[3]
+        hit = parent.get_hit() + hit_choice
+        max_life = parent.get_max_life() + ml_choice
+        threshold = parent.get_threshold() + threshold_choice
+        vision = parent.get_vision() + vision_choice
         gen = parent.get_gen() + 1
         pos = parent.get_intent().get_target()
         child = Animal(hit, max_life, threshold, vision, gen, pos, lineage= parent.get_lineage(), id= id)
@@ -51,6 +56,7 @@ class ReproduceUseCase:
         child.set_energy(parent.get_energy()/4)
         child.set_birthed(True)
         child.set_birth_pos(parent.get_pos())
+        child.virus = parent.virus
         return child
         
     def update_parent(self, parent: Animal):

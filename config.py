@@ -1,5 +1,5 @@
 import math
-
+import random
 
 # -------------------- MUTABLE CONSTANTS ---------------
 # ------------- FEEL FREE TO PLAY AROUND WITH ----------
@@ -7,15 +7,15 @@ import math
 # ****** SPAWN DATA ******
 W: int = 30
 H: int = 30
-TURNS: int = 10000
-SEED: int = 20241116
+TURNS: int = 100000
+SEED: int = 25440
 # [20241114, 20241116, 20241216, 20250120, 20250214, 20250505, 
 # 20251007, 20251112, 20251114, 20251116, 20260120, 20260225]
 ANIMAL_UNITS: int = 20
 FOOD_UNITS: int = 100
 LIFE_RANGE: list[int] = [1,100]
 HIT_RANGE: list[int] = [1,15]
-ENERGY_RANGE: list[int] = [1,150]
+ENERGY_RANGE: list[int] = [10,80]
 VISION_RANGE: list[int] = [3,5]
 # ************************
 # lists in this SPAWN DATA should be of length 2
@@ -29,7 +29,7 @@ VERSION = "V1"
 #check doc for details
 
 # ***** FOOD REGEN *****
-STABILITY_FACTOR: float = 0.19
+STABILITY_FACTOR: float = 0.30
 MAXPRL: float = 0.09
 MINPRL: float = 0.01
 TAU: int = 100
