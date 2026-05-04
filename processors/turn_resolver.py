@@ -10,6 +10,8 @@ from ..usecase.attack import ResolveAttackUseCase
 from ..usecase.reproduce import ReproduceUseCase
 from .state_updater import StateUpdater
 from ..usecase.food_regen import FoodRegenUseCase
+from ..usecase.virus_spawn import VirusSpawnUseCase
+from ..usecase.disease import DiseaseUseCase
 import random
 import time
 class TurnResolver: 
@@ -23,6 +25,8 @@ class TurnResolver:
     reproduce: ReproduceUseCase
     stateUpdater: StateUpdater
     food_regen: FoodRegenUseCase
+    virus_spawn = VirusSpawnUseCase
+    disease: DiseaseUseCase
 
 
 
@@ -32,19 +36,24 @@ class TurnResolver:
         self.resolve_movement = ResolveMovementUseCase()
         self.eat = EatUseCase()
         self.age = AgeUseCase()
-        self.death = DeathUseCase()
+        self.death = DeathUseCase(randomizer)
         self.attack = ResolveAttackUseCase()
         self.reproduce = ReproduceUseCase(mutate_list, randomizer)
         self.stateUpdater = StateUpdater()
         self.food_regen = FoodRegenUseCase(eng_range, randomizer)
+        self.virus_spawn = VirusSpawnUseCase(randomizer)
+        self.disease = DiseaseUseCase()
+        
 
     def step(self, world: World, genealogy: Genealogy) -> None:
         self.decide_intent.execute(world, genealogy)
         self.food_decay.execute(world)
+        self.virus_spawn.execute(world)
         self.attack.execute(world)
         self.reproduce.execute(world, genealogy)
         self.resolve_movement.execute(world)
         self.eat.execute(world)
+        self.disease.execute(world)
         self.age.execute(world)
         self.death.execute(world, genealogy)
         self.food_regen.execute(world)

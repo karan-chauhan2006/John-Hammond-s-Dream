@@ -81,7 +81,7 @@ class World:
     def get_food_list(self) -> dict[Position, Food]:
         return self.foods
     
-    def get_food(self, pos: Position) -> bool: 
+    def get_food(self, pos: Position) -> Food: 
         return self.foods[pos]
     
     def add_animal(self, pos: Position, animal: Animal):

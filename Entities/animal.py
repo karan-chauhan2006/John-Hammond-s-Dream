@@ -1,7 +1,7 @@
 from .position import Position
 from .intent import Intent
 from ..config import REPRODUCTION_CONSTANT, LIFE_DIVIDER
-
+from .virus import Virus
 import math
 class Animal:
     #traits
@@ -20,6 +20,7 @@ class Animal:
     pos: Position
     energy: float
     threshold: float
+    virus: list[Virus]
 
     #constants & intenral logic
     birthed: bool = False
@@ -48,6 +49,7 @@ class Animal:
         self.threshold_buffer = math.ceil(threshold/(self.life_divider))
         self.ate = False
         self.Id = id
+        self.virus = []
         pass 
 
 
@@ -135,3 +137,6 @@ class Animal:
 
     def set_lineage(self, lin: int):
         self.lineage = lin
+
+    def has_virus(self) -> bool:
+        return len(self.virus) != 0

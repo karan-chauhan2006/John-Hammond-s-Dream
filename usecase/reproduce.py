@@ -6,7 +6,7 @@ from ..Entities.food import Food
 from ..Entities.genealogy import Genealogy
 from ..Entities.genealogy_data import GenealogyData
 from ..config import MUTATION_CHOICE
-from .config import REPRODUCE
+from .config import REPRODUCE, TRAITS
 import math
 class ReproduceUseCase:
     mutate_list: list #HLTV
@@ -27,7 +27,8 @@ class ReproduceUseCase:
                     world.add_animal(child.get_pos(), child)
                     self.update_genes(child, parent, genealogy, world.get_state().turn)
                 else:
-                    food = Food(child.get_energy(), child.get_pos())
+                    type = self.randomizer.choice(TRAITS)
+                    food = Food(child.get_energy(), child.get_pos(), type)
                     world.add_food(food.get_pos(), food)
 
     def update_genes(self, child: Animal, parent: Animal, geneaology: Genealogy, turn: int):

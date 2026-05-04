@@ -1,4 +1,5 @@
 from ..config import MAXPRL, MINPRL, STABILITY_FACTOR, TAU, OSCILLATION_PERCENT
+from .config import TRAITS
 import math
 from ..Entities.world import World
 from ..Entities.spawn_data import SpawnData
@@ -152,5 +153,6 @@ class FoodRegenUseCase:
             except RuntimeError:
                 break
             energy = self.randomizer.choice(self.eng_range)
-            food = Food(energy, pos)
+            type = self.randomizer.choice(TRAITS)
+            food = Food(energy, pos, type)
             world.add_food(pos, food)

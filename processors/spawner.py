@@ -7,6 +7,7 @@ from .state_updater import StateUpdater
 from ..Entities.spawn_data import SpawnData
 from ..Entities.genealogy import Genealogy
 from ..Entities.genealogy_data import GenealogyData
+from .config import TRAITS
 
 class Spawner:
     spawn_data: SpawnData
@@ -53,7 +54,8 @@ class Spawner:
             except RuntimeError:
                 break
             energy = self.randomizer.choice(self.spawn_data.energy_range)
-            food = Food(energy, pos)
+            type = self.randomizer.choice(TRAITS)
+            food = Food(energy, pos, type)
             world.add_food(pos, food)
         return world
     

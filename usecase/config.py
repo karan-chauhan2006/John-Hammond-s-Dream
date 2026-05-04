@@ -11,3 +11,14 @@ V3 = "V3"
 V4 = "V4" 
 V5 = "V5"
 # *************************"
+
+VISION = "vision"
+HIT = "hit"
+THRESHOLD = "threshold"
+LIFE = "life"
+
+TRAITS = [VISION, HIT, THRESHOLD, LIFE]
+
+
+SYMBIOSIS = "symbiosis"
+LETHAL = "lethal"
