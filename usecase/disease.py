@@ -27,6 +27,14 @@ class DiseaseUseCase:
     
     def lethal_infection(self, animal: Animal, virus: Virus):
         if virus.counter == 0:
+            animal.direct_immunity.append(virus.code)
+            for i in range(1,math.floor(animal.immunity)):
+                s_effect_1 = str(math.floor(virus.effect+i))
+                s_effect_2 = str(math.floor(virus.effect-i))
+                code_1 = virus.trait[0]+s_effect_1
+                code_2 = virus.trait[0]+s_effect_2
+                animal.indirect_immunity.append(code_1)
+                animal.indirect_immunity.append(code_2)
             match (virus.trait):
                 case config.VISION:
                     if virus.effect < 0 and abs(virus.effect) > virus.trait_val:

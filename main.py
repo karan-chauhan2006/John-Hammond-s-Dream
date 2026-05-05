@@ -7,7 +7,7 @@ from .graphics.vizconfig import VizConfig
 from .data_processors.data_plotter import DataPlotter
 import random
 from .config import W, H, TURNS, SEED, ANIMAL_UNITS, FOOD_UNITS, TAU
-from .config import LIFE_RANGE, HIT_RANGE, ENERGY_RANGE, VISION_RANGE, VERSION
+from .config import LIFE_RANGE, HIT_RANGE, ENERGY_RANGE, VISION_RANGE, VERSION, IMMUNITY_RANGE
 from datetime import datetime
 from .data_processors.data_handler import DataHandler
 from .Entities.genealogy import Genealogy
@@ -23,7 +23,7 @@ def main():
     genealogy = Genealogy()
     spawn_data = SpawnData(animal_units=ANIMAL_UNITS, food_units=FOOD_UNITS, 
                       life_range=LIFE_RANGE, hit_range=HIT_RANGE,
-                       energy_range= ENERGY_RANGE, vision_range=VISION_RANGE,
+                       energy_range= ENERGY_RANGE, vision_range=VISION_RANGE, immunity_range= IMMUNITY_RANGE,
                         max_turns=TURNS)
     handler.record_spawn_data(spawn_data.get_data())
     resolver = TurnResolver(spawn_data.get_mutate_list(), spawn_data.get_eng_list(), randomizer)

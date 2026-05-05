@@ -25,21 +25,22 @@ class EatUseCase:
 
     def infect(self, animal: Animal, food: Food):
         virus = food.virus[0]
-        virus.phase = SYMBIOSIS
-        animal.virus.append(virus)
-        match (virus.trait):
-            case config.VISION:
-                virus.trait_val = animal.vision
-                animal.vision = max(animal.vision + virus.effect, 0)
-            case config.HIT:
-               virus.trait_val = animal.hit
-               animal.hit = max(animal.hit + virus.effect, 0)
-            case config.LIFE:
-                virus.trait_val = animal.life
-                animal.life = max(animal.life + virus.effect, 0)
-            case config.THRESHOLD:
-               virus.trait_val = animal.threshold
-               animal.threshold = max(animal.threshold + virus.effect, 0)
+        if not(virus.code in animal.direct_immunity or virus.code in animal.indirect_immunity):
+            virus.phase = SYMBIOSIS
+            animal.virus.append(virus)
+            match (virus.trait):
+                case config.VISION:
+                    virus.trait_val = animal.vision
+                    animal.vision = max(animal.vision + virus.effect, 0)
+                case config.HIT:
+                    virus.trait_val = animal.hit
+                    animal.hit = max(animal.hit + virus.effect, 0)
+                case config.LIFE:
+                    virus.trait_val = animal.life
+                    animal.life = max(animal.life + virus.effect, 0)
+                case config.THRESHOLD:
+                    virus.trait_val = animal.threshold
+                    animal.threshold = max(animal.threshold + virus.effect, 0)
 
         food.virus = []
 

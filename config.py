@@ -17,6 +17,7 @@ LIFE_RANGE: list[int] = [1,100]
 HIT_RANGE: list[int] = [1,15]
 ENERGY_RANGE: list[int] = [10,80]
 VISION_RANGE: list[int] = [3,5]
+IMMUNITY_RANGE: list[int] = [1,3]
 # ************************
 # lists in this SPAWN DATA should be of length 2
 # with min value at pos 0 and max value at pos 1 

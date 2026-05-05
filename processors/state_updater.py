@@ -14,31 +14,34 @@ class StateUpdater:
         state.avgET = data[3]
         state.avgH = data[4]
         state.avgV = data[5]
-        state.avgML = data[6]
-        state.avgL = data[7]
-        state.avgFE = data[8]
-        state.avgGen = data[9]
-        state.maxAE = data[10]
-        state.maxET = data[11]
-        state.maxH = data[12]
-        state.maxV = data[13]
-        state.maxL = data[14]
-        state.maxFE = data[15]
-        state.maxGen = data[16]
-        state.minAE = data[17]
-        state.minET = data[18]
-        state.minH = data[19]
-        state.minV = data[20]
-        state.minL = data[21]
-        state.minFE = data[22]
-        state.minGen = data[23]
-        state.totalAE = data[24]
-        state.totalFE = data[25]
-        state.totalE = data[24] + data[25]
-        state.mode = data[26]
-        state.E_indicator = data[27]
-        state.EDM = data[28]
-        state.RDM = data[29]
+        state.avgImm = data[6]
+        state.avgML = data[7]
+        state.avgL = data[8]
+        state.avgFE = data[9]
+        state.avgGen = data[10]
+        state.maxAE = data[11]
+        state.maxET = data[12]
+        state.maxH = data[13]
+        state.maxV = data[14]
+        state.maxImm = data[15]
+        state.maxL = data[16]
+        state.maxFE = data[17]
+        state.maxGen = data[18]
+        state.minAE = data[19]
+        state.minET = data[20]
+        state.minH = data[21]
+        state.minV = data[22]
+        state.minImm = data[23]
+        state.minL = data[24]
+        state.minFE = data[25]
+        state.minGen = data[26]
+        state.totalAE = data[27]
+        state.totalFE = data[28]
+        state.totalE = data[27] + data[28]
+        state.mode = data[29]
+        state.E_indicator = data[30]
+        state.EDM = data[31]
+        state.RDM = data[32]
 
     def compute_state(self, world: World) -> list:
         animals = len(world.animals)
@@ -47,6 +50,7 @@ class StateUpdater:
         avgET = 0.0
         avgH = 0.0
         avgV = 0.0
+        avgImm = 0.0
         avgML = 0.0
         avgL = 0.0
         avgFE = None
@@ -55,6 +59,7 @@ class StateUpdater:
         maxAE = 0
         maxH = 0
         maxV = 0
+        maxImm =0
         maxL = 0
         maxET = 0
         maxFE = 0
@@ -62,6 +67,7 @@ class StateUpdater:
         minAE = 10e10
         minH = 10e10
         minV = 10e10
+        minImm = 10e10
         minL = 10e10
         minET = 10e10
         minFE = 10e10
@@ -81,6 +87,7 @@ class StateUpdater:
                 avgML += a.get_max_life()
                 avgL += a.get_max_life()-a.get_life()
                 avgV += a.get_vision()
+                avgImm += a.immunity
                 avgGen += a.get_gen()
                 if a.get_gen() < minGen:
                     minGen = a.get_gen()
@@ -98,6 +105,10 @@ class StateUpdater:
                     maxV = a.get_vision()
                 if a.get_vision() < minV:
                     minV = a.get_vision()
+                if a.immunity > maxImm:
+                    maxImm = a.immunity
+                if a.immunity < minImm:
+                    minImm = a.immunity
                 if a.get_max_life() > maxL:
                     maxL = a.get_max_life()
                 if a.get_max_life() < minL:
@@ -110,6 +121,7 @@ class StateUpdater:
             avgET = avgET / animals
             avgH = avgH/animals
             avgV = avgV/animals
+            avgImm = avgImm/animals
             avgML = avgML/animals
             avgGen = avgGen / animals
             avgL = avgL / animals
@@ -118,18 +130,21 @@ class StateUpdater:
             avgET = 0.0
             avgH = 0
             avgV = 0
+            avgImm = 0.0
             avgML = 0
             avgGen = 0.0
             maxGen = 0
             maxAE = 0
             maxH = 0
             maxV = 0
+            maxImm = 0
             maxL = 0
             maxET = 0
             minGen = 0
             minAE = 0
             minH = 0
             minV = 0
+            minImm = 0
             minL = 0
             minET = 0
             totalAE = 0
@@ -181,10 +196,10 @@ class StateUpdater:
 
 
 
-        data = [animals,food,avgAE,avgET,avgH,avgV,
+        data = [animals,food,avgAE,avgET,avgH,avgV,avgImm,
                 avgML,avgL,avgFE,avgGen,maxAE,maxET,maxH,
-                maxV,maxL,maxFE,maxGen,minAE,minET,
-                minH,minV,minL,minFE,minGen,totalAE,totalFE,
+                maxV,maxImm,maxL,maxFE,maxGen,minAE,minET,
+                minH,minV,minImm,minL,minFE,minGen,totalAE,totalFE,
                 mode, E_indicator, edm, rdm]
         return data
 

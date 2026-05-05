@@ -35,7 +35,7 @@ class ReproduceUseCase:
     def update_genes(self, child: Animal, parent: Animal, geneaology: Genealogy, turn: int):
         data = GenealogyData(Id=child.Id, P_Id= parent.Id, lineage=child.lineage, gen=child.gen, birth_turn= turn,
                              birth_pos=child.pos, hit=child.hit, life=child.max_life,
-                             b_threshold=child.min_threshold, vision=child.vision)
+                             b_threshold=child.min_threshold, vision=child.vision, immunity= child.immunity)
         geneaology.add_genealogy(data=data)
 
     def create_child(self, parent: Animal, genealogy: Genealogy) -> Animal:
@@ -44,19 +44,22 @@ class ReproduceUseCase:
         ml_choice = self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[1]
         threshold_choice = self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[2]
         vision_choice = self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[3]
+        immunity_choice = self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[4]
         hit = parent.get_hit() + hit_choice
         max_life = parent.get_max_life() + ml_choice
         threshold = parent.get_threshold() + threshold_choice
         vision = parent.get_vision() + vision_choice
+        immunity = parent.immunity + immunity_choice
         gen = parent.get_gen() + 1
         pos = parent.get_intent().get_target()
-        child = Animal(hit, max_life, threshold, vision, gen, pos, lineage= parent.get_lineage(), id= id)
+        child = Animal(hit, max_life, threshold, vision, gen, pos, lineage= parent.get_lineage(), id= id, immunity=immunity)
         child.set_cooldown_attack(2)
         child.set_cooldown_aging(1)
         child.set_energy(parent.get_energy()/4)
         child.set_birthed(True)
         child.set_birth_pos(parent.get_pos())
         child.virus = parent.virus
+        child.indirect_immunity = parent.direct_immunity
         return child
         
     def update_parent(self, parent: Animal):

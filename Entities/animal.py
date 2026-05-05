@@ -12,6 +12,7 @@ class Animal:
     gen: int = 0
     lineage: int = None
     Id: int 
+    immunity: int
 
     #mutables
     intent: Intent
@@ -21,6 +22,8 @@ class Animal:
     energy: float
     threshold: float
     virus: list[Virus]
+    direct_immunity: list[str]
+    indirect_immunity: list[str]
 
     #constants & intenral logic
     birthed: bool = False
@@ -33,7 +36,7 @@ class Animal:
 
     
     def __init__(self, hit: int, max_life: int, threshold: float,
-                  vision: int, gen: int, pos: Position, lineage: int, id: int):
+                  vision: int, gen: int, pos: Position, lineage: int, id: int, immunity: int):
         self.hit = hit
         self.max_life = max_life
         self.life = max_life
@@ -50,6 +53,9 @@ class Animal:
         self.ate = False
         self.Id = id
         self.virus = []
+        self.immunity = immunity
+        self.direct_immunity = []
+        self.indirect_immunity = []
         pass 
 
 

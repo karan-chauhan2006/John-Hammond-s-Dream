@@ -9,13 +9,14 @@ class SpawnData:
     hit_range: list[float]
     energy_range: list[float]
     vision_range: list[float]
+    immunity_range: list[float]
     max_turns: int = -1
     version: str
 
     def __init__(self, animal_units: int, food_units: int, 
                  life_range: list[float], hit_range: list[float],
                  energy_range: list[float], vision_range: list[float],
-                max_turns: int):
+                immunity_range: list[float],max_turns: int):
         self.animal_units = animal_units
         self.food_units = food_units
         self.life_range = []
@@ -30,6 +31,9 @@ class SpawnData:
         self.vision_range = []
         for i in range(vision_range[1]-vision_range[0]):
             self.vision_range.append(vision_range[0]+i)
+        self.immunity_range = []
+        for i in range(immunity_range[1]-immunity_range[0]):
+            self.immunity_range.append(immunity_range[0]+i)
         self.max_turns = max_turns
     
     def get_data(self) -> list:
@@ -43,6 +47,7 @@ class SpawnData:
                 ["life range", self.life_range[0], self.life_range[-1]],
                 ["vision range", self.vision_range[0], self.vision_range[-1]],
                 ["energy range", self.energy_range[0], self.energy_range[-1]],
+                ["immunity range", self.immunity_range[0], self.immunity_range[-1]],
                 ["Stability factor", STABILITY_FACTOR, STABILITY_FACTOR],
                 ["Peace Regen Limit", MINPRL, MAXPRL],
                 ["Half cycle", TAU, TAU],
@@ -54,12 +59,13 @@ class SpawnData:
                 ["Version", VERSION, VERSION]]
     
     def get_mutate_list(self):
-        #HLTV
+        #HLTVI
         
         return [(self.hit_range[-1]-self.hit_range[0]+2)*MUTATION_CONSTANT,
                 (self.life_range[-1]-self.life_range[0]+2)*MUTATION_CONSTANT,
                 (self.energy_range[-1]-self.energy_range[0]+2)*MUTATION_CONSTANT,
-                (self.vision_range[-1]-self.vision_range[0]+2)*MUTATION_CONSTANT]
+                (self.vision_range[-1]-self.vision_range[0]+2)*MUTATION_CONSTANT,
+                (self.immunity_range[-1]-self.immunity_range[0]+2)*MUTATION_CONSTANT]
     
     def get_eng_list(self):
         return self.energy_range

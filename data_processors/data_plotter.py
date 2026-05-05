@@ -34,6 +34,7 @@ class DataPlotter:
         self.mode_plot(fig, turn_data, spawn_data)
         self.cooldown_plot(fig, turn_data, spawn_data)
         self.food_add_plot(fig, turn_data, spawn_data)
+        self.plot_ET(fig,turn_data, spawn_data)
         self.t_format_and_save(fig)
 
      def e_ind_plot(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
@@ -73,7 +74,14 @@ class DataPlotter:
                                   line=dict(color = "pink")), row = 1, col = 2)
          
           
-         
+     def plot_ET(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
+        turn = turn_data["Turn"]
+        avgET = turn_data["avgET"]
+        maxET = turn_data["maxET"]
+        minET = turn_data["minET"]
+        fig.add_trace(go.Scatter(x = turn, y = minET, mode = "lines", name = "minET"), row = 4, col = 4)
+        fig.add_trace(go.Scatter(x = turn, y = avgET, mode = "lines", name = "avgET"), row = 4, col =4)
+        fig.add_trace(go.Scatter(x = turn, y = maxET, mode = "lines", name = "maxET"), row = 4, col = 4)
 
 
      def t_plot_afc(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
@@ -87,17 +95,11 @@ class DataPlotter:
      def t_plot_AE_ET(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
         turn = turn_data["Turn"]
         avgAE = turn_data["avgAE"]
-        avgET = turn_data["avgET"]
         maxAE = turn_data["maxAE"]
-        maxET = turn_data["maxET"]
         minAE = turn_data["minAE"]
-        minET = turn_data["minET"]
         fig.add_trace(go.Scatter(x = turn, y = minAE, mode = "lines", name = f"minAE: [{spawn_data['Min Val'][5]},{spawn_data['Max Val'][5]}]"), row = 3, col = 1)
         fig.add_trace(go.Scatter(x = turn, y = avgAE, mode = "lines", name = "avgAE"), row = 3, col =1)
         fig.add_trace(go.Scatter(x = turn, y = maxAE, mode = "lines", name = "maxAE"), row = 3, col = 1)
-        fig.add_trace(go.Scatter(x = turn, y = minET, mode = "lines", name = "minET"), row = 3, col = 1)
-        fig.add_trace(go.Scatter(x = turn, y = avgET, mode = "lines", name = "avgET"), row = 3, col =1)
-        fig.add_trace(go.Scatter(x = turn, y = maxET, mode = "lines", name = "maxET"), row = 3, col = 1)
         
 
      def t_plot_H(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):

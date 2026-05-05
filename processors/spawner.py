@@ -36,13 +36,14 @@ class Spawner:
             max_life = self.randomizer.choice(self.spawn_data.life_range)
             threshold = self.randomizer.choice(self.spawn_data.energy_range)
             vision = self.randomizer.choice(self.spawn_data.vision_range)
-            animal = Animal(hit, max_life, threshold, vision, 0, pos, lineage= i+1, id= id)
+            immunity = self.randomizer.choice(self.spawn_data.immunity_range)
+            animal = Animal(hit, max_life, threshold, vision, 0, pos, lineage= i+1, id= id, immunity=immunity)
             animal.set_birthed(True)
             animal.set_birth_pos(pos)
             world.add_animal(pos,animal)
             data = GenealogyData(Id= id, P_Id= 0, lineage= i+1, gen = 0, birth_turn=0,
                                  birth_pos= pos, hit= hit, life= max_life, 
-                                 b_threshold= threshold, vision= vision)
+                                 b_threshold= threshold, vision= vision, immunity=immunity)
             genealogy.add_genealogy(data)
         return world, genealogy
 

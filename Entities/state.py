@@ -14,6 +14,7 @@ class State:
     avgL: float = None
     avgFE: float = None
     avgGen: float = None
+    avgImm: float = None
     maxAE: float = 0.0
     maxET: float = 0.0
     maxH: float = 0
@@ -21,6 +22,7 @@ class State:
     maxL: float = 0
     maxFE: float = 0.0
     maxGen: int = 0
+    maxImm: float = 0.0
     minAE: float = 10e10
     minET: float = 10e10
     minH: float = 10e10
@@ -28,6 +30,7 @@ class State:
     minL: float = 10e10
     minFE: float = 10e10
     minGen: int = 10e10
+    minImm: float = 10e10
     # aspects total
     totalAE: float = None
     totalFE: float = None
@@ -52,10 +55,10 @@ class State:
 
     def get_arr(self) -> list:
         return [self.turn, self.animals, self.food, self.avgAE, self.avgET,
-                self.avgH, self.avgV, self.avgML, self.avgL, self.avgFE, self.avgGen,
-                self.maxAE, self.maxET, self.maxH, self.maxV, self.maxL,
+                self.avgH, self.avgV, self.avgImm, self.avgML, self.avgL, self.avgFE, self.avgGen,
+                self.maxAE, self.maxET, self.maxH, self.maxV, self.maxImm, self.maxL,
                 self.maxFE, self.maxGen, self.minAE, self.minET, self.minH,
-                self.minV, self.minL, self.minFE, self.minGen, self.totalAE,
+                self.minV, self.minImm, self.minL, self.minFE, self.minGen, self.totalAE,
                 self.totalFE, self.totalE, self.totalCombat, self.Nfactor, self.min_bound,
                 self.avg_bound, self.max_bound, self.cooldown, self.limit, self.mode, self.peaceful_factor, 
                 self.food_added,self.E_indicator, self.EDM, self.RDM]
