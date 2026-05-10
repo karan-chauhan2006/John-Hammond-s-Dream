@@ -5,19 +5,19 @@ from ..graphics.colours import Colours
 from ..Entities.world import World
 from ..Entities.food import Food
 from ..Entities.animal import Animal
-from ..data_processors.data_handler import DataHandler
+from ..data_processors.database_handler import DataBaseHandler
 from ..processors.turn_resolver import TurnResolver
 from ..Entities.genealogy import Genealogy
 from ..usecase.flush import FlushUseCase
 from .config import MODES, P_MODES
 class Runner:
-    data_handler: DataHandler
+    data_handler: DataBaseHandler
     flush: FlushUseCase
     modes: list[str]
     current_mode_num: int
     colours: Colours
 
-    def __init__(self, W: int, H: int, cfg: VizConfig, data_handler: DataHandler, version: str):
+    def __init__(self, W: int, H: int, cfg: VizConfig, data_handler: DataBaseHandler, version: str):
         pygame.init()
         self.W, self.H = W, H
         self.cfg = cfg
