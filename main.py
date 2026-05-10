@@ -4,19 +4,19 @@ from .processors.turn_resolver import TurnResolver
 from .processors.spawner import Spawner
 from .processors.runner import Runner
 from .graphics.vizconfig import VizConfig
-from .data_processors.data_plotter import DataPlotter
+from .data_processors.database_plotter import DataBasePlotter
 import random
 from .config import W, H, TURNS, SEED, ANIMAL_UNITS, FOOD_UNITS, TAU
 from .config import LIFE_RANGE, HIT_RANGE, ENERGY_RANGE, VISION_RANGE, VERSION
 from datetime import datetime
-from .data_processors.data_handler import DataHandler
+from .data_processors.database_handler import DataBaseHandler
 from .Entities.genealogy import Genealogy
 def main():
     now = datetime.now()
     time = now.strftime("%Y_%m_%d_%H_%M_%S")
     name = f"{time}_{SEED}"
     randomizer = random.Random(SEED)
-    handler = DataHandler(name)
+    handler = DataBaseHandler(name)
     handler.start()
     # Seed makes runs reproducible; change/remove if you want true randomness.
     world = World(W, H, randomizer)
@@ -32,7 +32,7 @@ def main():
     viz = Runner(W, H, VizConfig(cell_size=18, fps=30, autoplay_steps_per_sec=1), handler, VERSION)
     viz.run(world, genealogy, resolver, max_turns=TURNS)
     handler.close()
-    DataPlotter(name, TAU).plot()
+    DataBasePlotter(name, TAU).plot()
     
     # for t in range( turns + 1):
     #     if t!=0:
