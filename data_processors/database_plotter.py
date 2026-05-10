@@ -1,11 +1,12 @@
 from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
-from .config import DATA, PLOTS
+from .config import DATA, PLOTS, SPAWN_TABLE, TURN_TABLE
 import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-class DataPlotter: 
+import sqlite3
+class DataBasePlotter: 
      data_path: Path
      result_path: Path
      def __init__(self, name: str, tau: int):
@@ -14,9 +15,26 @@ class DataPlotter:
         self.result_path = DATA / name
         self.tau = tau
 
+     def load_data(self) -> tuple[pd.DataFrame, pd.DataFrame]:
+        db_path = self.data_path / "data_base.db"
+
+        with sqlite3.connect(db_path) as conn:
+            turn_data = pd.read_sql_query(f"""
+                SELECT *
+                FROM {TURN_TABLE}
+                ORDER BY Turn;
+            """, conn)
+
+            spawn_data = pd.read_sql_query(f"""
+                SELECT *
+                FROM {SPAWN_TABLE};
+            """, conn)
+
+        return turn_data, spawn_data
+
      def plot(self):
-        turn_data = pd.read_csv(self.data_path / "turn_data.csv")
-        spawn_data = pd.read_csv(self.data_path / "spawn_data.csv")
+        turn_data, spawn_data = self.load_data()
+
         fig = make_subplots(rows=4,cols=4, shared_xaxes=False, 
                             subplot_titles=PLOTS)
         self.t_plot_afc(fig, turn_data, spawn_data)
@@ -39,8 +57,8 @@ class DataPlotter:
 
      def e_ind_plot(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
          turn = turn_data["Turn"]
-         e_estimator = turn_data["E-indicator"]
-         fig.add_trace(go.Scatter(x = turn, y = e_estimator, mode = "lines", name = f"E-indicator"), row = 1, col = 3)
+         e_estimator = turn_data["E_indicator"]
+         fig.add_trace(go.Scatter(x = turn, y = e_estimator, mode = "lines", name = f"E_indicator"), row = 1, col = 3)
 
      def rdm_plot(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
          turn = turn_data["Turn"]
@@ -61,14 +79,14 @@ class DataPlotter:
      def cooldown_plot(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
          turn = turn_data["Turn"]
          e_estimator = turn_data["cooldown"]
-         limit = turn_data["limit"]
+         limit = turn_data["cycle_limit"]
          fig.add_trace(go.Scatter(x = turn, y = e_estimator, mode = "lines", name = f"cooldown"), row = 4, col = 2)
          fig.add_trace(go.Scatter(x = turn, y = limit, mode = "lines", name = f"limit"), row = 4, col = 2)
          fig.add_trace(go.Scatter(x = [turn.iloc[0], turn.iloc[-1]], y = [2*self.tau, 2*self.tau], mode = "lines", name = f"full cycle"), row = 4, col = 2)
      
      def food_add_plot(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
          turn = turn_data["Turn"]
-         e_estimator = turn_data["food added"]
+         e_estimator = turn_data["food_added"]
          fig.add_trace(go.Scatter(x = turn, y = e_estimator, 
                                   mode = "lines", name = f"food added", 
                                   line=dict(color = "pink")), row = 1, col = 2)
@@ -86,10 +104,10 @@ class DataPlotter:
 
      def t_plot_afc(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
           turn = turn_data["Turn"]
-          animal = turn_data["#animals"]
-          food = turn_data["#food"]
-          fig.add_trace(go.Scatter(x = turn, y = animal, mode = "lines", name = f"#animals: {spawn_data['Min Val'][0]}"), row = 1, col = 1)
-          fig.add_trace(go.Scatter(x = turn, y = food, mode = "lines", name = f"#food: {spawn_data['Min Val'][1]}"), row = 1, col =1)
+          animal = turn_data["num_animals"]
+          food = turn_data["num_food"]
+          fig.add_trace(go.Scatter(x = turn, y = animal, mode = "lines", name = f"#animals"), row = 1, col = 1)
+          fig.add_trace(go.Scatter(x = turn, y = food, mode = "lines", name = f"#food"), row = 1, col =1)
           
 
      def t_plot_AE_ET(self,fig, turn_data: pd.DataFrame, spawn_data: pd.DataFrame):
@@ -97,7 +115,8 @@ class DataPlotter:
         avgAE = turn_data["avgAE"]
         maxAE = turn_data["maxAE"]
         minAE = turn_data["minAE"]
-        fig.add_trace(go.Scatter(x = turn, y = minAE, mode = "lines", name = f"minAE: [{spawn_data['Min Val'][5]},{spawn_data['Max Val'][5]}]"), row = 3, col = 1)
+        minET = turn_data["minET"]
+        fig.add_trace(go.Scatter(x = turn, y = minAE, mode = "lines", name = f"minAE"), row = 3, col = 1)
         fig.add_trace(go.Scatter(x = turn, y = avgAE, mode = "lines", name = "avgAE"), row = 3, col =1)
         fig.add_trace(go.Scatter(x = turn, y = maxAE, mode = "lines", name = "maxAE"), row = 3, col = 1)
         
@@ -107,7 +126,7 @@ class DataPlotter:
          avgH = turn_data["avgH"]
          minH = turn_data["minH"]
          maxH = turn_data["maxH"]
-         fig.add_trace(go.Scatter(x = turn, y = minH, mode = "lines", name = f"minH: [{spawn_data['Min Val'][2]},{spawn_data['Max Val'][2]}]"), row = 2, col = 1)
+         fig.add_trace(go.Scatter(x = turn, y = minH, mode = "lines", name = f"minH"), row = 2, col = 1)
          fig.add_trace(go.Scatter(x = turn, y = avgH, mode = "lines", name = "avgH"), row = 2, col =1)
          fig.add_trace(go.Scatter(x = turn, y = maxH, mode = "lines", name = "maxH"), row = 2, col = 1)
          
@@ -118,7 +137,7 @@ class DataPlotter:
          minML = turn_data["minML"]
          maxML = turn_data["maxML"]
          avgL = turn_data["avgL"]
-         fig.add_trace(go.Scatter(x = turn, y = minML, mode = "lines", name = f"minML: [{spawn_data['Min Val'][3]},{spawn_data['Max Val'][3]}]"), row = 2, col = 2)
+         fig.add_trace(go.Scatter(x = turn, y = minML, mode = "lines", name = f"minML"), row = 2, col = 2)
          fig.add_trace(go.Scatter(x = turn, y = avgML, mode = "lines", name = "avgML"), row = 2, col =2)
          fig.add_trace(go.Scatter(x = turn, y = maxML, mode = "lines", name = "maxML"), row = 2, col = 2)
          fig.add_trace(go.Scatter(x = turn, y = avgL, mode = "lines", name = "avgL"), row = 2, col = 2)
@@ -128,7 +147,7 @@ class DataPlotter:
          avgV = turn_data["avgV"]
          minV = turn_data["minV"]
          maxV = turn_data["maxV"]
-         fig.add_trace(go.Scatter(x = turn, y = minV, mode = "lines", name = f"minV: [{spawn_data['Min Val'][4]},{spawn_data['Max Val'][4]}]"), row = 2, col = 3)
+         fig.add_trace(go.Scatter(x = turn, y = minV, mode = "lines", name = f"minV"), row = 2, col = 3)
          fig.add_trace(go.Scatter(x = turn, y = avgV, mode = "lines", name = "avgV"), row = 2, col =3)
          fig.add_trace(go.Scatter(x = turn, y = maxV, mode = "lines", name = "maxV"), row = 2, col = 3)
 
@@ -146,7 +165,7 @@ class DataPlotter:
          avgFE = turn_data["avgFE"]
          minFE = turn_data["minFE"]
          maxFE = turn_data["maxFE"]
-         fig.add_trace(go.Scatter(x = turn, y = minFE, mode = "lines", name = f"minFE: [{spawn_data['Min Val'][5]},{spawn_data['Max Val'][5]}]"), row = 3, col = 2)
+         fig.add_trace(go.Scatter(x = turn, y = minFE, mode = "lines", name = f"minFE"), row = 3, col = 2)
          fig.add_trace(go.Scatter(x = turn, y = avgFE, mode = "lines", name = "average food energy"), row = 3, col = 2)
          fig.add_trace(go.Scatter(x = turn, y = maxFE, mode = "lines", name = "maximum food energy"), row = 3, col = 2)
          
