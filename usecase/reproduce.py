@@ -7,12 +7,13 @@ from ..Entities.genealogy import Genealogy
 from ..Entities.genealogy_data import GenealogyData
 from ..config import MUTATION_CHOICE
 from .config import REPRODUCE, TRAITS
-from . import config
+from ..Entities.randomizer import Randomizer
+from. import config
 import math
 class ReproduceUseCase:
     mutate_list: list #HLTV
-    randomizer: random.Random
-    def  __init__(self, mutate_list: list, randomizer: random.Random):
+    randomizer: Randomizer
+    def  __init__(self, mutate_list: list, randomizer: Randomizer):
         self.mutate_list = mutate_list
         self.randomizer = randomizer
 
@@ -40,10 +41,10 @@ class ReproduceUseCase:
 
     def create_child(self, parent: Animal, genealogy: Genealogy) -> Animal:
         id = genealogy.max_id + 1
-        hit_choice = self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[0]
-        ml_choice = self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[1]
-        threshold_choice = self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[2]
-        vision_choice = self.randomizer.choice(MUTATION_CHOICE)*self.mutate_list[3]
+        hit_choice = self.randomizer.base_randomizer.choice(MUTATION_CHOICE)*self.mutate_list[0]
+        ml_choice = self.randomizer.base_randomizer.choice(MUTATION_CHOICE)*self.mutate_list[1]
+        threshold_choice = self.randomizer.base_randomizer.choice(MUTATION_CHOICE)*self.mutate_list[2]
+        vision_choice = self.randomizer.base_randomizer.choice(MUTATION_CHOICE)*self.mutate_list[3]
         hit = parent.get_hit() + hit_choice
         max_life = parent.get_max_life() + ml_choice
         threshold = parent.get_threshold() + threshold_choice

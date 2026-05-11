@@ -5,6 +5,7 @@ from ..Entities.world import World
 from ..Entities.spawn_data import SpawnData
 import random
 from ..Entities.food import Food
+from ..Entities.randomizer import Randomizer
 class FoodRegenUseCase:
     stability_factor = STABILITY_FACTOR
     maxPRL = MAXPRL
@@ -17,7 +18,7 @@ class FoodRegenUseCase:
     eng_range: list 
     o_mode: bool = False
     c_mode: bool = False
-    randomizer: random.Random
+    randomizer: Randomizer
     r: int #direction of oscillation
     f: int # 0 of oscilation
     a: float #amplitude of oscillation
@@ -26,10 +27,10 @@ class FoodRegenUseCase:
     counter: int
     limit: int
 
-    def __init__(self,eng_range, randomizer: random.Random):
+    def __init__(self,eng_range, randomizer: Randomizer):
         self.eng_range = eng_range
         self.randomizer = randomizer
-        self.limit = randomizer.randint(2* TAU, 4* TAU)
+        self.limit = randomizer.base_randomizer.randint(2* TAU, 4* TAU)
         self.counter = 0
 
     def caculate(self, world: World):
@@ -70,7 +71,7 @@ class FoodRegenUseCase:
              if self.cooldown <= 0:
                  self.o_mode = False
                  self.c_mode = False
-                 self.limit = self.randomizer.randint(2*TAU, 4*TAU)
+                 self.limit = self.randomizer.base_randomizer.randint(2*TAU, 4*TAU)
         
         elif self.cooldown >=0 and 2*TAU > self.cooldown:
             self.o_mode = False
@@ -120,7 +121,7 @@ class FoodRegenUseCase:
             self.pfactor = self.get_peaceful_factor()
             self.f = math.ceil((dfood + math.ceil(self.pfactor * food)))
             self.a = math.ceil((dfood + math.ceil(self.pfactor * food)))
-            self.r = self.randomizer.choice([1,-1])
+            self.r = self.randomizer.base_randomizer.choice([1,-1])
             self.o_mode = True
             self.counter = -1
         self.counter += 1
@@ -152,7 +153,7 @@ class FoodRegenUseCase:
                 pos = world.random_empty_cell()
             except RuntimeError:
                 break
-            energy = self.randomizer.choice(self.eng_range)
-            type = self.randomizer.choice(TRAITS)
+            energy = self.randomizer.base_randomizer.choice(self.eng_range)
+            type = self.randomizer.virus_randomiser.choice(TRAITS)
             food = Food(energy, pos, type)
             world.add_food(pos, food)
