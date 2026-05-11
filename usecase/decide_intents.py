@@ -7,10 +7,11 @@ from ..Entities.genealogy import Genealogy
 from ..config import VERSION
 from . import config
 import math
+from ..Entities.randomizer import Randomizer
 class DecideIntentUseCase:
-    randomizer: random.Random
+    randomizer: Randomizer
 
-    def __init__(self, randomizer: random.Random):
+    def __init__(self, randomizer: Randomizer):
         self.randomizer = randomizer
         
     
@@ -92,7 +93,7 @@ class DecideIntentUseCase:
         # chooses which direction to move in 
         loc = self.find_loc(world,pos)
         if loc == pos:
-            return self.randomizer.choice(world.neighbours(pos))
+            return self.randomizer.base_randomizer.choice(world.neighbours(pos))
         else:
             min_dis = world.distance(pos, loc)
             dis_x = world.distance_x(pos, loc)
@@ -114,7 +115,7 @@ class DecideIntentUseCase:
             if len(final) == 0:
                 return pos
             else:
-                return self.randomizer.choice(final)
+                return self.randomizer.base_randomizer.choice(final)
 
 
         
@@ -164,5 +165,5 @@ class DecideIntentUseCase:
         for n in neighbours:
             if world.is_empty(n):
                 empty.append(n)
-        return self.randomizer.choice(empty)
+        return self.randomizer.base_randomizer.choice(empty)
                     

@@ -7,13 +7,13 @@ from .state_updater import StateUpdater
 from ..Entities.spawn_data import SpawnData
 from ..Entities.genealogy import Genealogy
 from ..Entities.genealogy_data import GenealogyData
-
+from ..Entities.randomizer import Randomizer
 class Spawner:
     spawn_data: SpawnData
     state_updater: StateUpdater
-    randomizer: random.Random
+    randomizer: Randomizer
 
-    def __init__(self, spawn_data: SpawnData, randomizer: random.Random):
+    def __init__(self, spawn_data: SpawnData, randomizer: Randomizer):
         self.spawn_data = spawn_data
         self.state_updater = StateUpdater()
         self.randomizer = randomizer
@@ -31,10 +31,10 @@ class Spawner:
             except RuntimeError:
                 break
             id = genealogy.max_id + 1
-            hit = self.randomizer.choice(self.spawn_data.hit_range)
-            max_life = self.randomizer.choice(self.spawn_data.life_range)
-            threshold = self.randomizer.choice(self.spawn_data.energy_range)
-            vision = self.randomizer.choice(self.spawn_data.vision_range)
+            hit = self.randomizer.base_randomizer.choice(self.spawn_data.hit_range)
+            max_life = self.randomizer.base_randomizer.choice(self.spawn_data.life_range)
+            threshold = self.randomizer.base_randomizer.choice(self.spawn_data.energy_range)
+            vision = self.randomizer.base_randomizer.choice(self.spawn_data.vision_range)
             animal = Animal(hit, max_life, threshold, vision, 0, pos, lineage= i+1, id= id)
             animal.set_birthed(True)
             animal.set_birth_pos(pos)
@@ -52,7 +52,7 @@ class Spawner:
                 pos = world.random_empty_cell()
             except RuntimeError:
                 break
-            energy = self.randomizer.choice(self.spawn_data.energy_range)
+            energy = self.randomizer.base_randomizer.choice(self.spawn_data.energy_range)
             food = Food(energy, pos)
             world.add_food(pos, food)
         return world

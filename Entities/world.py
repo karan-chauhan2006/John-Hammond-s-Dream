@@ -4,14 +4,16 @@ from .position import Position
 from .animal import Animal
 from .food import Food
 from .state import State
+from .randomizer import Randomizer
 class World: 
     W: int
     H: int
     animals: dict[Position, Animal]
     foods: dict[Position, Food]
     state: State
+    rng: Randomizer
 
-    def __init__(self, W: int, H: int, randomizer: random.Random):
+    def __init__(self, W: int, H: int, randomizer: Randomizer):
         self.W = W
         self.H = H
         self.rng = randomizer
@@ -106,7 +108,7 @@ class World:
         self.foods.pop(pos, None)
 
     def random_cell(self) -> Position:
-        return Position(self.rng.randrange(self.W), self.rng.randrange(self.H))
+        return Position(self.rng.base_randomizer.randrange(self.W), self.rng.base_randomizer.randrange(self.H))
 
     def random_empty_cell(self) -> Position:
         for _ in range(self.W * self.H * 3):
