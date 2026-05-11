@@ -11,11 +11,12 @@ from .config import LIFE_RANGE, HIT_RANGE, ENERGY_RANGE, VISION_RANGE, VERSION
 from datetime import datetime
 from .data_processors.database_handler import DataBaseHandler
 from .Entities.genealogy import Genealogy
+from .Entities.randomizer import Randomizer
 def main():
     now = datetime.now()
     time = now.strftime("%Y_%m_%d_%H_%M_%S")
     name = f"{time}_{SEED}"
-    randomizer = random.Random(SEED)
+    randomizer = Randomizer(SEED)
     handler = DataBaseHandler(name)
     handler.start()
     # Seed makes runs reproducible; change/remove if you want true randomness.
