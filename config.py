@@ -5,8 +5,8 @@ import random
 # ------------- FEEL FREE TO PLAY AROUND WITH ----------
 
 # ****** SPAWN DATA ******
-W: int = 100
-H: int = 100
+W: int = 30
+H: int = 30
 TURNS: int = 100
 SEED: int = random.randint(1,10000)
 # [20241114, 20241116, 20241216, 20250120, 20250214, 20250505, 

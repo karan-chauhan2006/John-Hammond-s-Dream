@@ -12,6 +12,7 @@ from .state_updater import StateUpdater
 from ..usecase.food_regen import FoodRegenUseCase
 from ..usecase.virus_spawn import VirusSpawnUseCase
 from ..usecase.disease import DiseaseUseCase
+from ..Entities.randomizer import Randomizer
 import random
 import time
 class TurnResolver: 
@@ -30,7 +31,7 @@ class TurnResolver:
 
 
 
-    def __init__(self, mutate_list: list, eng_range: list, randomizer: random.Random):
+    def __init__(self, mutate_list: list, eng_range: list, randomizer: Randomizer):
         self.food_decay = FoodDecayUseCase()
         self.decide_intent = DecideIntentUseCase(randomizer)
         self.resolve_movement = ResolveMovementUseCase()

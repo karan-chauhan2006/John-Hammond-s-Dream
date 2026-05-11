@@ -4,10 +4,11 @@ from ..Entities.virus import Virus
 from . import config
 from ..config import ENERGY_RANGE, HIT_RANGE, VISION_RANGE, LIFE_RANGE
 import random
+from ..Entities.randomizer import Randomizer
 class VirusSpawnUseCase:
-    randomizer: random.Random 
+    randomizer: Randomizer
 
-    def __init__(self, randomizer: random.Random):
+    def __init__(self, randomizer: Randomizer):
         self.randomizer = randomizer
         pass
 
@@ -22,7 +23,7 @@ class VirusSpawnUseCase:
 
     def check(self, food: Food) -> bool:
         ratio = food.get_energy() / food.max_energy
-        choice = self.randomizer.choice([1,0,-1])
+        choice = self.randomizer.virus_randomiser.choice([1,0,-1])
         return (ratio < 0.7) and (0.5 < ratio ) and (choice == 1)
     
     def spawn_virus(self, food: Food):
@@ -35,14 +36,14 @@ class VirusSpawnUseCase:
     def get_effect(self, trait: str):
         match trait:
             case config.VISION:
-                mag = self.randomizer.randint(1, VISION_RANGE[1]-VISION_RANGE[0]) 
+                mag = self.randomizer.virus_randomiser.randint(1, VISION_RANGE[1]-VISION_RANGE[0]) 
             case config.HIT:
-                mag = self.randomizer.randint(1, HIT_RANGE[1]-HIT_RANGE[0])
+                mag = self.randomizer.virus_randomiser.randint(1, HIT_RANGE[1]-HIT_RANGE[0])
             case config.LIFE:
-                mag = self.randomizer.randint(1, LIFE_RANGE[1]-LIFE_RANGE[0])
+                mag = self.randomizer.virus_randomiser.randint(1, LIFE_RANGE[1]-LIFE_RANGE[0])
             case config.THRESHOLD:
-                mag = self.randomizer.randint(1, ENERGY_RANGE[1]-ENERGY_RANGE[0])
-        sgn = self.randomizer.choice([1,-1])
+                mag = self.randomizer.virus_randomiser.randint(1, ENERGY_RANGE[1]-ENERGY_RANGE[0])
+        sgn = self.randomizer.virus_randomiser.choice([1,-1])
         return mag * sgn
     
     def get_cost(self, effect: float, type: str)-> float:

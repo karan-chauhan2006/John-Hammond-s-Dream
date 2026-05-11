@@ -29,7 +29,7 @@ class ReproduceUseCase:
                     world.add_animal(child.get_pos(), child)
                     self.update_genes(child, parent, genealogy, world.get_state().turn)
                 else:
-                    type = self.randomizer.choice(TRAITS)
+                    type = self.randomizer.virus_randomiser.choice(TRAITS)
                     food = Food(child.get_energy(), child.get_pos(), type)
                     world.add_food(food.get_pos(), food)
 

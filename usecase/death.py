@@ -4,11 +4,12 @@ from ..Entities.food import Food
 from ..Entities.genealogy import Genealogy
 from ..Entities.genealogy_data import GenealogyData
 from .config import TRAITS
+from ..Entities.randomizer import Randomizer
 import random
 class DeathUseCase: 
-    randomizer: random.Random
+    randomizer: Randomizer
 
-    def __init__(self, randomizer: random.Random):
+    def __init__(self, randomizer: Randomizer):
         self.randomizer = randomizer
 
     def execute(self, world: World, genealogy: Genealogy):
@@ -18,7 +19,7 @@ class DeathUseCase:
             if animal.get_life() <= 0:
                 energy = animal.get_energy()
                 world.remove_animal(key)
-                type = self.randomizer.choice(TRAITS)
+                type = self.randomizer.virus_randomiser.choice(TRAITS)
                 food = Food(energy, key, type)
                 world.add_food(key, food)
                 genealogy.finalise_genealogy(animal.Id, world.get_state().turn, animal.pos, animal.threshold) 
